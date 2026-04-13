@@ -381,8 +381,10 @@ function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile, o
                 disabled={!f.active}
               >
                 <div className="feature-card-icon">{f.icon}</div>
-                <div className="feature-card-label">{f.label}</div>
-                <div className="feature-card-desc">{f.desc}</div>
+                <div className="feature-card-text">
+                  <span className="feature-card-label">{f.label}</span>
+                  <span className="feature-card-desc">{f.desc}</span>
+                </div>
                 {f.active && !f.locked && <div className="feature-card-badge">Play →</div>}
                 {f.locked && <div className="feature-card-badge" style={{ background: "#fee2e2", color: "#dc2626" }}>Locked</div>}
               </button>
@@ -539,21 +541,11 @@ function QuizScreen({ category, onComplete, onBack }) {
           <div className="quiz-track-fill" style={{ width: `${barPct}%` }} />
         </div>
 
-        {/* step dots + timer */}
+        {/* step dots */}
         <div className="quiz-steprow">
-          {stepDots.slice(0, 2).map((active, i) => (
+          {stepDots.map((active, i) => (
             <div key={i} className={`quiz-dot${active ? " active" : ""}`}>
               <span className="quiz-dot-num">{i + 1}</span>
-            </div>
-          ))}
-
-          <div className="quiz-timer">
-            <span>{timeLeft}</span>
-          </div>
-
-          {stepDots.slice(2).map((active, i) => (
-            <div key={i + 2} className={`quiz-dot${active ? " active" : ""}`}>
-              <span className="quiz-dot-num">{i + 3}</span>
             </div>
           ))}
         </div>
@@ -1248,8 +1240,8 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
     <div className="quiz-root">
       <div className="quiz-header">
         <div className="quiz-track"><div className="quiz-track-fill" style={{ width: `${progressPct}%` }} /></div>
-        <div className="quiz-steprow">
-          <div className="quiz-timer" style={{ border: "solid 8px #6366f1" }}><span style={{ color: "#6366f1" }}>{index+1}/{words.length}</span></div>
+        <div className="quiz-steprow" style={{ justifyContent: "center" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", background: "rgba(0,0,0,0.25)", borderRadius: 20, padding: "4px 16px" }}>{index+1} / {words.length}</span>
         </div>
       </div>
       <div className="quiz-card">
@@ -1567,12 +1559,8 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
       <div className="quiz-header">
         <div className="quiz-track"><div className="quiz-track-fill" style={{ width: `${barPct}%` }} /></div>
         <div className="quiz-steprow">
-          {stepDots.slice(0,2).map((active, i) => (
+          {stepDots.map((active, i) => (
             <div key={i} className={`quiz-dot${active ? " active" : ""}`}><span className="quiz-dot-num">{i+1}</span></div>
-          ))}
-          <div className="quiz-timer"><span>{timeLeft ?? sentences.length - index}</span></div>
-          {stepDots.slice(2).map((active, i) => (
-            <div key={i+2} className={`quiz-dot${active ? " active" : ""}`}><span className="quiz-dot-num">{i+3}</span></div>
           ))}
         </div>
       </div>

@@ -327,8 +327,8 @@ body {
   margin: 20px 0 12px;
 }
 .features-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -336,36 +336,39 @@ body {
   background: var(--white);
   border: 2px solid var(--grey);
   border-radius: 4px;
-  padding: 20px 16px;
+  padding: 14px 18px;
   text-align: left;
   cursor: pointer;
   transition: border-color 0.3s, border-width 0.2s;
   font-family: var(--font);
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
 }
 .feature-card:hover,
 .feature-card.active { border-color: var(--primary); border-width: 4px; }
 .feature-card.locked { border-color: #fca5a5; opacity: 0.85; cursor: not-allowed; }
 .feature-card.disabled { opacity: 0.5; cursor: not-allowed; }
-.feature-card-icon { font-size: clamp(24px, 5vw, 34px); margin-bottom: 4px; }
+.feature-card-icon { font-size: clamp(22px, 5vw, 30px); flex-shrink: 0; }
+.feature-card-text { flex: 1; text-align: left; }
 .feature-card-label {
-  font-size: clamp(13px, 2.8vw, 17px);
+  font-size: clamp(14px, 3vw, 17px);
   font-weight: 800;
   color: var(--dark);
+  display: block;
 }
-.feature-card-desc { font-size: clamp(11px, 2vw, 13px); color: var(--grey); }
+.feature-card-desc { font-size: clamp(11px, 2vw, 13px); color: var(--grey); display: block; }
 .feature-card-badge {
-  margin-top: 8px;
-  display: inline-block;
   background: var(--primary);
   color: var(--white);
   font-size: 12px;
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 20px;
-  align-self: flex-start;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -773,24 +776,24 @@ body {
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Desktop: centred 480px column — background image shows on all sides */
+/* Desktop: centred 480px column — card takes bottom 2/3, bg shows top 1/3 */
 @media (min-width: 769px) {
   .app-screen {
     align-items: center;
-    justify-content: flex-end;   /* card sticks to bottom of viewport */
+    justify-content: flex-end;
   }
   .screen-card {
     width: 100%;
     max-width: 480px;
+    height: 66.67vh;        /* exactly 2/3 of viewport height */
+    flex: none;             /* override flex:1 so height is respected */
     border-radius: 40px 40px 0 0;
     box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
-    /* height: fills from margin-top to bottom via flex:1 */
+    margin-top: 0;          /* margin handled by the 33.33vh of bg above */
   }
 }
 
-@media (max-width: 768px) {
-  .features-grid { grid-template-columns: 1fr 1fr; }
-}
+/* (features-grid is always a vertical list now) */
 
 @media (max-width: 576px) {
   .screen-card {
@@ -798,8 +801,7 @@ body {
     border-top-right-radius: 28px;
     margin-top: clamp(28px, 5vh, 48px);
   }
-  .features-grid { grid-template-columns: 1fr; }
-  .stats-row { flex-wrap: wrap; }
+.stats-row { flex-wrap: wrap; }
   .stat-box { min-width: 45%; }
   .screen-nav button, .nav-btn { min-width: 100%; }
 }
