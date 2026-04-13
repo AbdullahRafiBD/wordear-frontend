@@ -579,22 +579,22 @@ function QuizScreen({ category, onComplete, onBack }) {
               </button>
             )}
           </div>
-        </div>
 
-        {/* feedback strip */}
-        {feedback === "correct" && (
-          <div className="quiz-feedback ok">
-            ✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp;&nbsp;
-            <span style={{ color: "rgb(254,98,73)", fontWeight: 900, letterSpacing: 2 }}>"{current.word}"</span>
-          </div>
-        )}
-        {feedback === "wrong" && (
-          <div className="quiz-feedback bad">
-            ❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct:&nbsp;
-            <strong style={{ color: "rgb(254,98,73)" }}>{current.word}</strong>
-            &nbsp;— You wrote: <em>{input}</em>
-          </div>
-        )}
+          {/* feedback strip — directly under the input row */}
+          {feedback === "correct" && (
+            <div className="quiz-feedback ok">
+              ✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp;&nbsp;
+              <span style={{ color: "rgb(254,98,73)", fontWeight: 900, letterSpacing: 2 }}>"{current.word}"</span>
+            </div>
+          )}
+          {feedback === "wrong" && (
+            <div className="quiz-feedback bad">
+              ❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct:&nbsp;
+              <strong style={{ color: "rgb(254,98,73)" }}>{current.word}</strong>
+              &nbsp;— You wrote: <em>{input}</em>
+            </div>
+          )}
+        </div>
 
         {/* nav buttons */}
         <div className="quiz-nav">
@@ -1244,9 +1244,9 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
               </button>
             )}
           </div>
+          {feedback === "correct" && <div className="quiz-feedback ok">✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp; <span style={{ color: "var(--primary)", fontWeight: 900 }}>"{current.content}"</span></div>}
+          {feedback === "wrong" && <div className="quiz-feedback bad">❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct: <strong style={{ color: "var(--primary)" }}>{current.content}</strong>&nbsp;— You wrote: <em>{input}</em></div>}
         </div>
-        {feedback === "correct" && <div className="quiz-feedback ok">✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp; <span style={{ color: "var(--primary)", fontWeight: 900 }}>"{current.content}"</span></div>}
-        {feedback === "wrong" && <div className="quiz-feedback bad">❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct: <strong style={{ color: "var(--primary)" }}>{current.content}</strong>&nbsp;— You wrote: <em>{input}</em></div>}
         <div className="quiz-nav">
           {results.length > 0 && <button onClick={() => onComplete([...results])}>← FINISH EARLY</button>}
           {!feedback
