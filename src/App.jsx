@@ -352,7 +352,6 @@ function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile, o
       action: onGroups,
       locked: isBlocked,
     },
-    { icon: "🎯", label: "Speed Mode", desc: "Coming soon", active: false },
   ];
 
   return (
@@ -376,7 +375,7 @@ function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile, o
             {features.map((f) => (
               <button
                 key={f.label}
-                className={`feature-card${f.locked ? " locked" : f.active ? " active" : " disabled"}`}
+                className={`feature-card${f.locked ? " locked" : ""}`}
                 onClick={f.active ? f.action : undefined}
                 disabled={!f.active}
               >
@@ -550,15 +549,13 @@ function QuizScreen({ category, onComplete, onBack }) {
         {/* option boxes */}
         <div className="quiz-fieldset">
 
-          {/* audio option box */}
+          {/* round play button */}
           <button
-            className={`quiz-option audio-btn${isPlaying ? " playing" : ""}`}
+            className={`round-play-btn${isPlaying ? " playing" : ""}`}
             onClick={playAudio}
+            aria-label="Play word"
           >
-            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"} quiz-option-icon`} />
-            <span className="quiz-option-label">
-              {isPlaying ? "Playing…" : "Tap to hear the word"}
-            </span>
+            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"}`} />
           </button>
 
           {/* text input option box */}
@@ -1225,9 +1222,8 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
         </div>
         <h1 className="quiz-question">{current.description || "Listen and type the word"}</h1>
         <div className="quiz-fieldset">
-          <button className={`quiz-option audio-btn${isPlaying ? " playing" : ""}`} onClick={playAudio}>
-            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"} quiz-option-icon`} />
-            <span className="quiz-option-label">{isPlaying ? "Playing…" : "Tap to hear"}</span>
+          <button className={`round-play-btn${isPlaying ? " playing" : ""}`} onClick={playAudio} aria-label="Play word">
+            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"}`} />
           </button>
           <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
             <input ref={inputRef} className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
@@ -1538,9 +1534,8 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
         <h1 className="quiz-question">Listen and repeat the sentence aloud</h1>
         <div className="quiz-fieldset">
           {/* Play button */}
-          <button className={`quiz-option audio-btn${isPlaying ? " playing" : ""}`} onClick={playSentence}>
-            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"} quiz-option-icon`} />
-            <span className="quiz-option-label">{isPlaying ? "Playing…" : "Tap to hear sentence"}</span>
+          <button className={`round-play-btn${isPlaying ? " playing" : ""}`} onClick={playSentence} aria-label="Play sentence">
+            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"}`} />
           </button>
           {/* Transcript / mic area */}
           {!feedback && (

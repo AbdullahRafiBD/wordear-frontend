@@ -345,10 +345,8 @@ body {
   gap: 14px;
   width: 100%;
 }
-.feature-card:hover,
-.feature-card.active { border-color: var(--primary); border-width: 4px; }
-.feature-card.locked { border-color: #fca5a5; opacity: 0.85; cursor: not-allowed; }
-.feature-card.disabled { opacity: 0.5; cursor: not-allowed; }
+.feature-card:hover { border-color: var(--primary); border-width: 4px; }
+.feature-card.locked { border-color: #fca5a5; opacity: 0.85; cursor: not-allowed; pointer-events: none; }
 .feature-card-icon { font-size: clamp(22px, 5vw, 30px); flex-shrink: 0; }
 .feature-card-text { flex: 1; text-align: left; }
 .feature-card-label {
