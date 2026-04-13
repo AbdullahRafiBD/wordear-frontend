@@ -1,6 +1,8 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { authAPI, wordsAPI, attemptsAPI, shadowingAPI, groupsAPI } from "./api";
+import "./app.css";
+import "./quiz.css";
 
 // ─── Screens ──────────────────────────────────────────────────────────────────
 const SCREENS = {
@@ -192,9 +194,7 @@ export default function App() {
   }, [user, screen]);
 
   return (
-    <div style={styles.appRoot}>
-      <div style={styles.bgDecor1} />
-      <div style={styles.bgDecor2} />
+    <div className="app-root">
       {screen === SCREENS.LOGIN && (
         <LoginScreen onSuccess={handleGoogleLoginSuccess} />
       )}
@@ -304,34 +304,23 @@ function LoginScreen({ onSuccess }) {
   };
 
   return (
-    <div style={styles.loginWrapper}>
-      <div style={styles.loginCard}>
-        <div style={styles.loginLogo}>
-          <div style={styles.logoIcon}>🎧</div>
-          <h1 style={styles.loginTitle}>WordEar</h1>
-          <p style={styles.loginSub}>Listen. Spell. Master.</p>
+    <div className="login-screen">
+      <div className="login-card">
+        <div className="login-logo-icon">🎧</div>
+        <h1 className="login-title">English Backbone</h1>
+        <p className="login-sub">Listen. Spell. Master.</p>
+
+        <div className="login-features">
+          {["🔊 Listen to words", "✍️ Spell them out", "📊 Track progress"].map(f => (
+            <div key={f} className="login-chip">{f}</div>
+          ))}
         </div>
 
-        <div style={styles.loginFeatures}>
-          {["🔊 Listen to words", "✍️ Spell them out", "📊 Track progress"].map(
-            (f) => (
-              <div key={f} style={styles.featureChip}>
-                {f}
-              </div>
-            )
-          )}
+        <div style={{ opacity: isLoading ? 0.7 : 1 }}>
+          <GoogleLogin onSuccess={handleLogin} onError={() => alert("Login failed")} />
         </div>
 
-        <div style={{ opacity: isLoading ? 0.7 : 1, marginBottom: 20 }}>
-          <GoogleLogin
-            onSuccess={handleLogin}
-            onError={() => alert("Login failed")}
-          />
-        </div>
-
-        <p style={styles.loginNote}>
-          Sign in with Google to get started
-        </p>
+        <p className="login-note">Sign in with Google to get started</p>
       </div>
     </div>
   );
@@ -367,57 +356,45 @@ function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile, o
   ];
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.homeHeader}>
-        <div>
-          <p style={styles.greet}>Welcome back 👋</p>
-          <h2 style={styles.userName}>{user?.name}</h2>
-        </div>
-        <button style={styles.avatarBtn} onClick={onProfile}>
-          <div style={styles.avatar}>{user?.name?.[0]?.toUpperCase()}</div>
-        </button>
-      </div>
-
-      <div style={styles.heroBanner}>
-        <div style={styles.heroBannerInner}>
-          <h3 style={styles.heroTitle}>Ready to train your ear?</h3>
-          <p style={styles.heroSub}>
-            Listen to words and spell them correctly to earn points.
-          </p>
-        </div>
-        <div style={styles.heroBannerEmoji}>🎧</div>
-      </div>
-
-      <h3 style={styles.sectionLabel}>Choose a Mode</h3>
-      <div style={styles.featuresGrid}>
-        {features.map((f) => (
-          <button
-            key={f.label}
-            style={{
-              ...styles.featureCard,
-              ...(f.locked
-                ? styles.featureCardLocked
-                : f.active
-                ? styles.featureCardActive
-                : styles.featureCardDisabled),
-            }}
-            onClick={f.active ? f.action : undefined}
-            disabled={!f.active}
-          >
-            <div style={styles.featureCardIcon}>{f.icon}</div>
-            <div style={styles.featureCardLabel}>{f.label}</div>
-            <div style={styles.featureCardDesc}>{f.desc}</div>
-            {f.active && <div style={styles.featureCardBadge}>Play →</div>}
-            {f.locked && (
-              <div style={{
-                marginTop: 10, display: "inline-block",
-                background: "#fee2e2", color: "#dc2626",
-                fontSize: 11, fontWeight: 700,
-                padding: "3px 8px", borderRadius: 20,
-              }}>Locked</div>
-            )}
+    <div className="app-screen">
+      <div className="screen-head">
+        <div className="home-user-row">
+          <div>
+            <p className="home-greet">Welcome back 👋</p>
+            <h2 className="home-username">{user?.name}</h2>
+          </div>
+          <button className="home-avatar" onClick={onProfile}>
+            {user?.name?.[0]?.toUpperCase()}
           </button>
-        ))}
+        </div>
+      </div>
+
+      <div className="screen-card">
+        <div className="screen-body">
+          <h3 className="section-title">Choose a Mode</h3>
+          <div className="features-grid">
+            {features.map((f) => (
+              <button
+                key={f.label}
+                className={`feature-card${f.locked ? " locked" : f.active ? " active" : " disabled"}`}
+                onClick={f.active ? f.action : undefined}
+                disabled={!f.active}
+              >
+                <div className="feature-card-icon">{f.icon}</div>
+                <div className="feature-card-label">{f.label}</div>
+                <div className="feature-card-desc">{f.desc}</div>
+                {f.active && !f.locked && <div className="feature-card-badge">Play →</div>}
+                {f.locked && <div className="feature-card-badge" style={{ background: "#fee2e2", color: "#dc2626" }}>Locked</div>}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="screen-nav">
+          <button className="primary" onClick={onLogout}>
+            <i className="fa-solid fa-right-from-bracket" /> Logout
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -432,33 +409,32 @@ function CategoryScreen({ onSelect, onBack }) {
   ];
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <button style={styles.backBtn} onClick={onBack}>
-          ← Back
-        </button>
-        <h2 style={styles.screenTitle}>Pick a Category</h2>
-        <div style={{ width: 60 }} />
+    <div className="app-screen">
+      <div className="screen-head">
+        <div className="screen-head-row">
+          <button className="head-back-btn" onClick={onBack}>
+            <i className="fa-solid fa-arrow-left" /> Back
+          </button>
+          <span className="score-badge">Pick a Category</span>
+        </div>
+        <h1 className="screen-head-title">Select a Letter</h1>
+        <p className="screen-head-sub">Tap a letter to start spelling words from that category</p>
       </div>
 
-      <p style={styles.catSubtitle}>
-        Select a letter to start spelling words from that category
-      </p>
-
-      <div style={styles.keyboardContainer}>
-        {rows.map((row, ri) => (
-          <div key={ri} style={styles.keyboardRow}>
-            {row.map((letter) => (
-              <button
-                key={letter}
-                style={styles.keyBtn}
-                onClick={() => onSelect(letter)}
-              >
-                <span style={styles.keyBtnLetter}>{letter}</span>
-              </button>
+      <div className="screen-card">
+        <div className="screen-body">
+          <div className="kbd-wrap">
+            {rows.map((row, ri) => (
+              <div key={ri} className="kbd-row">
+                {row.map((letter) => (
+                  <button key={letter} className="kbd-key" onClick={() => onSelect(letter)}>
+                    {letter}
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
@@ -466,38 +442,48 @@ function CategoryScreen({ onSelect, onBack }) {
 
 // ─── Quiz Screen ──────────────────────────────────────────────────────────────
 function QuizScreen({ category, onComplete, onBack }) {
-  const [words, setWords] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [index, setIndex] = useState(0);
-  const [input, setInput] = useState("");
-  const [feedback, setFeedback] = useState(null);
-  const [score, setScore] = useState(0);
+  const [words, setWords]       = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [index, setIndex]       = useState(0);
+  const [input, setInput]       = useState("");
+  const [feedback, setFeedback] = useState(null); // null | "correct" | "wrong"
+  const [score, setScore]       = useState(0);
   const [attempts, setAttempts] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60);
   const inputRef = useRef(null);
 
+  /* fetch words */
   useEffect(() => {
-    const fetchWords = async () => {
+    (async () => {
       try {
-        const response = await wordsAPI.getWordsByLetter(category);
-        const shuffledWords = shuffleArray(response.data);
-        setWords(shuffledWords);
+        const res = await wordsAPI.getWordsByLetter(category);
+        setWords(shuffleArray(res.data));
         setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch words:", error);
+      } catch {
         alert("Failed to load words");
         onBack();
       }
-    };
-    fetchWords();
+    })();
   }, [category, onBack]);
 
+  /* auto-play + focus on new word */
   useEffect(() => {
     if (words.length > 0 && index < words.length) {
       setTimeout(() => playAudio(), 400);
       inputRef.current?.focus();
     }
   }, [index, words]);
+
+  /* countdown timer — resets each new word */
+  useEffect(() => {
+    if (loading) return;
+    setTimeLeft(60);
+    const t = setInterval(() => {
+      setTimeLeft(n => { if (n <= 1) { clearInterval(t); return 0; } return n - 1; });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [index, loading]);
 
   const current = words[index];
 
@@ -510,180 +496,154 @@ function QuizScreen({ category, onComplete, onBack }) {
 
   const handleSubmit = () => {
     if (!input.trim()) return;
-    const isCorrect =
-      input.trim().toLowerCase() === current.word.toLowerCase();
-    const attempt = {
-      word: current.word,
-      user_answer: input.trim(),
-      is_correct: isCorrect,
-      category,
-      timestamp: new Date().toISOString(),
-    };
-    setAttempts((prev) => [...prev, attempt]);
-    if (isCorrect) {
-      setScore((s) => s + 1);
-      setFeedback("correct");
-    } else {
-      setFeedback("wrong");
-    }
+    const isCorrect = input.trim().toLowerCase() === current.word.toLowerCase();
+    const attempt = { word: current.word, user_answer: input.trim(), is_correct: isCorrect, category, timestamp: new Date().toISOString() };
+    setAttempts(prev => [...prev, attempt]);
+    setFeedback(isCorrect ? "correct" : "wrong");
+    if (isCorrect) setScore(s => s + 1);
   };
 
   const handleNext = () => {
-    if (index + 1 >= words.length) {
-      onComplete(attempts.concat());
-    } else {
-      setIndex((i) => i + 1);
-      setInput("");
-      setFeedback(null);
-    }
+    if (index + 1 >= words.length) { onComplete([...attempts]); return; }
+    setIndex(i => i + 1);
+    setInput("");
+    setFeedback(null);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      if (feedback) handleNext();
-      else handleSubmit();
-    }
+  const handleKeyDown = e => {
+    if (e.key === "Enter") { feedback ? handleNext() : handleSubmit(); }
   };
 
-  if (loading) {
-    return (
-      <div style={styles.screen}>
-        <div style={{ textAlign: "center", padding: "40px" }}>Loading words...</div>
-      </div>
-    );
-  }
+  /* loading states */
+  if (loading) return (
+    <div className="quiz-root" style={{ alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "#fff", fontSize: 22, fontFamily: "'Jost', sans-serif" }}>Loading words…</p>
+    </div>
+  );
+  if (words.length === 0) return (
+    <div className="quiz-root" style={{ alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "#fff", fontSize: 22, fontFamily: "'Jost', sans-serif" }}>No words found for this category.</p>
+      <button onClick={onBack} style={{ marginTop: 16, padding: "10px 24px", borderRadius: 8, border: "none", background: "rgb(254,98,73)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>Go Back</button>
+    </div>
+  );
 
-  if (words.length === 0) {
-    return (
-      <div style={styles.screen}>
-        <div style={{ textAlign: "center", padding: "40px" }}>
-          No words found for this category
-        </div>
-      </div>
-    );
-  }
-
-  const progressPct = Math.round((index / words.length) * 100);
+  /* step progress dots (4 checkpoints across word list) */
+  const STEP_COUNT = 4;
+  const stepDots = Array.from({ length: STEP_COUNT }, (_, i) =>
+    index >= Math.floor((i / STEP_COUNT) * words.length)
+  );
+  const barPct = (stepDots.filter(Boolean).length / STEP_COUNT) * 100;
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.quizHeader}>
-        <button style={styles.backBtn} onClick={onBack}>
-          ← Back
-        </button>
-        <div style={styles.quizMeta}>
-          <span style={styles.quizCat}>Category: {category}</span>
-          <span style={styles.quizScore}>⭐ {score} pts</span>
+    <div className="quiz-root">
+
+      {/* ══════════ HEADER ══════════ */}
+      <div className="quiz-header">
+
+        {/* grey track + orange fill */}
+        <div className="quiz-track">
+          <div className="quiz-track-fill" style={{ width: `${barPct}%` }} />
         </div>
-      </div>
 
-      <div style={styles.progressBar}>
-        <div style={{ ...styles.progressFill, width: `${progressPct}%` }} />
-      </div>
-      <div style={styles.progressLabel}>
-        {index + 1} / {words.length}
-      </div>
+        {/* step dots + timer */}
+        <div className="quiz-steprow">
+          {stepDots.slice(0, 2).map((active, i) => (
+            <div key={i} className={`quiz-dot${active ? " active" : ""}`}>
+              <span className="quiz-dot-num">{i + 1}</span>
+            </div>
+          ))}
 
-      <div style={styles.audioSection}>
-        <div style={styles.audioHint}>
-          {current?.description || current?.hint || ""}
-        </div>
-        <button
-          style={{
-            ...styles.audioBtn,
-            ...(isPlaying ? styles.audioBtnPlaying : {}),
-          }}
-          onClick={playAudio}
-        >
-          <span style={styles.audioIcon}>{isPlaying ? "🔊" : "▶"}</span>
-          <span style={styles.audioBtnText}>
-            {isPlaying ? "Playing..." : "Play Word"}
-          </span>
-        </button>
-        <p style={styles.audioSub}>
-          Press the button to hear the word, then type it below
-        </p>
-      </div>
-
-      <div style={styles.inputSection}>
-        <input
-          ref={inputRef}
-          style={{
-            ...styles.wordInput,
-            borderColor:
-              feedback === "correct"
-                ? "#22c55e"
-                : feedback === "wrong"
-                ? "#ef4444"
-                : "#e2e8f0",
-            boxShadow:
-              feedback === "correct"
-                ? "0 0 0 4px rgba(34,197,94,0.15)"
-                : feedback === "wrong"
-                ? "0 0 0 4px rgba(239,68,68,0.15)"
-                : "none",
-          }}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type the word you heard..."
-          readOnly={!!feedback}
-          autoComplete="off"
-          spellCheck={false}
-        />
-
-        {!feedback && (
-          <button style={styles.submitBtn} onClick={handleSubmit}>
-            Check Answer →
-          </button>
-        )}
-      </div>
-
-      {feedback === "correct" && (
-        <div style={styles.feedbackCorrect}>
-          <div style={styles.feedbackIcon}>✅</div>
-          <div style={styles.feedbackTitle}>Correct! +1 point</div>
-          <div style={styles.feedbackWord}>"{current.word}"</div>
-          <button style={styles.nextBtn} onClick={handleNext}>
-            {index + 1 >= words.length ? "See Results 🏆" : "Next Word →"}
-          </button>
-        </div>
-      )}
-
-      {feedback === "wrong" && (
-        <div style={styles.feedbackWrong}>
-          <div style={styles.feedbackIcon}>❌</div>
-          <div style={styles.feedbackTitle}>Not quite!</div>
-          <div style={styles.feedbackCorrectWord}>
-            Correct spelling:{" "}
-            <strong style={{ color: "#f97316" }}>{current.word}</strong>
+          <div className="quiz-timer">
+            <span>{timeLeft}</span>
           </div>
-          <div style={styles.feedbackYours}>Your answer: <em>{input}</em></div>
-          <button style={styles.nextBtnOrange} onClick={handleNext}>
-            {index + 1 >= words.length ? "See Results 🏆" : "Next Word →"}
-          </button>
-        </div>
-      )}
 
-      {attempts.length > 0 && (
-        <button
-          onClick={() => onComplete([...attempts])}
-          style={{
-            marginTop: 16,
-            width: "100%",
-            padding: "12px",
-            background: "transparent",
-            border: "2px solid #e2e8f0",
-            borderRadius: 12,
-            color: "#94a3b8",
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          Finish Exam Early
-        </button>
-      )}
+          {stepDots.slice(2).map((active, i) => (
+            <div key={i + 2} className={`quiz-dot${active ? " active" : ""}`}>
+              <span className="quiz-dot-num">{i + 3}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ══════════ CONTENT CARD ══════════ */}
+      <div className="quiz-card">
+
+        {/* back + score */}
+        <div className="quiz-meta-row">
+          <button className="quiz-back-btn" onClick={onBack}>
+            <i className="fa-solid fa-arrow-left" /> Back
+          </button>
+          <span className="quiz-score">⭐ {score} pts &nbsp;|&nbsp; {index + 1} / {words.length}</span>
+        </div>
+
+        {/* question / hint */}
+        <h1 className="quiz-question">
+          {current?.description || current?.hint || "Listen and type the word"}
+        </h1>
+
+        {/* option boxes */}
+        <div className="quiz-fieldset">
+
+          {/* audio option box */}
+          <button
+            className={`quiz-option audio-btn${isPlaying ? " playing" : ""}`}
+            onClick={playAudio}
+          >
+            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"} quiz-option-icon`} />
+            <span className="quiz-option-label">
+              {isPlaying ? "Playing…" : "Tap to hear the word"}
+            </span>
+          </button>
+
+          {/* text input option box */}
+          <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
+            <input
+              ref={inputRef}
+              className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type the word you heard…"
+              readOnly={!!feedback}
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </div>
+        </div>
+
+        {/* feedback strip */}
+        {feedback === "correct" && (
+          <div className="quiz-feedback ok">
+            ✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp;&nbsp;
+            <span style={{ color: "rgb(254,98,73)", fontWeight: 900, letterSpacing: 2 }}>"{current.word}"</span>
+          </div>
+        )}
+        {feedback === "wrong" && (
+          <div className="quiz-feedback bad">
+            ❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct:&nbsp;
+            <strong style={{ color: "rgb(254,98,73)" }}>{current.word}</strong>
+            &nbsp;— You wrote: <em>{input}</em>
+          </div>
+        )}
+
+        {/* nav buttons */}
+        <div className="quiz-nav">
+          {attempts.length > 0 && (
+            <button onClick={() => onComplete([...attempts])}>
+              <i className="fa-solid fa-arrow-left" /> FINISH EARLY
+            </button>
+          )}
+          {!feedback ? (
+            <button className="next-btn" onClick={handleSubmit}>
+              CHECK ANSWER <i className="fa-solid fa-arrow-right" />
+            </button>
+          ) : (
+            <button className="next-btn" onClick={handleNext}>
+              {index + 1 >= words.length ? "SEE RESULTS 🏆" : <>NEXT WORD <i className="fa-solid fa-arrow-right" /></>}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -706,83 +666,57 @@ function ResultsScreen({ results, category, onHome, onRetry }) {
   const accuracy = Math.round((correct / total) * 100);
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <h2 style={styles.screenTitle}>Quiz Results 🎉</h2>
+    <div className="app-screen">
+      <div className="screen-head">
+        <h1 className="screen-head-title">Quiz Results 🎉</h1>
+        <p className="screen-head-sub">Category: <strong style={{ color: "#fff" }}>{category}</strong></p>
       </div>
 
-      {/* Stats Summary */}
-      <div style={styles.resultsSummary}>
-        <div style={styles.resultsCategory}>Category: <strong>{category}</strong></div>
-        <div style={styles.resultsStats}>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#6366f1" }}>{total}</div>
-            <div style={styles.statLabel}>Total</div>
+      <div className="screen-card">
+        <div className="screen-body">
+          {/* Stats */}
+          <div className="results-summary">
+            <div className="stats-row">
+              {[
+                { label: "Total",    value: total,        color: "var(--primary)" },
+                { label: "Correct",  value: correct,      color: "#22c55e" },
+                { label: "Wrong",    value: wrong,        color: "#ef4444" },
+                { label: "Accuracy", value: `${accuracy}%`, color: "var(--dark)" },
+              ].map(s => (
+                <div key={s.label} className="stat-box">
+                  <span className="stat-value" style={{ color: s.color }}>{s.value}</span>
+                  <span className="stat-label">{s.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#22c55e" }}>{correct}</div>
-            <div style={styles.statLabel}>Correct</div>
-          </div>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#ef4444" }}>{wrong}</div>
-            <div style={styles.statLabel}>Wrong</div>
-          </div>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#000000" }}>{accuracy}%</div>
-            <div style={styles.statLabel}>Accuracy</div>
-          </div>
-        </div>
-      </div>
 
-      {/* Accuracy Bar */}
-      <div style={styles.accuracySection}>
-        <div style={styles.accBar}>
-          <div style={{ ...styles.accFill, width: `${accuracy}%` }} />
-        </div>
-      </div>
+          {/* Accuracy bar */}
+          <div className="acc-bar-wrap">
+            <div className="acc-bar"><div className="acc-fill" style={{ width: `${accuracy}%` }} /></div>
+          </div>
 
-      {/* Attempted Words List */}
-      <div style={styles.resultsTitle}>Attempted Words</div>
-      <div style={styles.resultsList}>
-        {results.map((result, index) => (
-          <div key={index} style={styles.resultItem}>
-            <div style={{ display: "flex", gap: "10px", alignItems: "center", flex: 1 }}>
-              <div
-                style={{
-                  ...styles.resultDot,
-                  background: result.is_correct ? "#22c55e" : "#ef4444",
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <div style={styles.resultWord}>{index + 1}. {result.word}</div>
-                {!result.is_correct && (
-                  <div style={styles.resultYourAnswer}>
-                    You wrote: <strong>"{result.user_answer}"</strong>
-                  </div>
-                )}
+          <div className="results-section-title">Attempted Words</div>
+          <div className="result-list">
+            {results.map((r, i) => (
+              <div key={i} className="result-row">
+                <div className="result-dot" style={{ background: r.is_correct ? "#22c55e" : "#ef4444" }} />
+                <div style={{ flex: 1 }}>
+                  <div className="result-word">{i + 1}. {r.word}</div>
+                  {!r.is_correct && <div className="result-your">You wrote: <strong>"{r.user_answer}"</strong></div>}
+                </div>
+                <div className="result-badge" style={{ background: r.is_correct ? "#dcfce7" : "#fee2e2", color: r.is_correct ? "#16a34a" : "#dc2626" }}>
+                  {r.is_correct ? "✓" : "✗"}
+                </div>
               </div>
-            </div>
-            <div
-              style={{
-                ...styles.resultBadge,
-                background: result.is_correct ? "#dcfce7" : "#fee2e2",
-                color: result.is_correct ? "#16a34a" : "#dc2626",
-              }}
-            >
-              {result.is_correct ? "✓" : "✗"}
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Buttons */}
-      <div style={styles.resultsButtons}>
-        <button style={styles.retryBtn} onClick={onRetry}>
-          🔄 Retry This Category
-        </button>
-        <button style={styles.homeBtn} onClick={onHome}>
-          🏠 Back to Home
-        </button>
+        <div className="screen-nav">
+          <button onClick={onRetry}><i className="fa-solid fa-rotate-right" /> RETRY</button>
+          <button className="primary" onClick={onHome}><i className="fa-solid fa-house" /> HOME</button>
+        </div>
       </div>
     </div>
   );
@@ -879,210 +813,140 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
   const [tab, setTab] = useState("overview");
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <button style={styles.backBtn} onClick={onBack}>← Back</button>
-        <h2 style={styles.screenTitle}>My Profile</h2>
-        <div style={{ width: 60 }} />
-      </div>
-
-      <div style={styles.profileCard}>
-        <div style={styles.profileAvatar}>{user?.name?.[0]?.toUpperCase()}</div>
-        <div style={{ flex: 1 }}>
-          <div style={styles.profileName}>{user?.name}</div>
-          <div style={styles.profileEmail}>{user?.email}</div>
+    <div className="app-screen">
+      <div className="screen-head">
+        <div className="screen-head-row">
+          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
         </div>
-        <button
-          onClick={onLogout}
-          style={{
-            background: "#fee2e2", color: "#dc2626", border: "none",
-            borderRadius: 10, padding: "8px 14px", fontSize: 13,
-            fontWeight: 600, cursor: "pointer",
-          }}
-        >
-          Logout
-        </button>
+        <h1 className="screen-head-title">My Profile</h1>
       </div>
 
-      <div style={styles.statsRow}>
-        {[
-          { label: "Attempted", value: total, color: "#6366f1" },
-          { label: "Correct", value: correct, color: "#22c55e" },
-          { label: "Wrong", value: wrong, color: "#ef4444" },
-          { label: "Accuracy", value: `${accuracy}%`, color: "#000000" },
-        ].map((s) => (
-          <div key={s.label} style={styles.statCard}>
-            <div style={{ ...styles.statValue, color: s.color }}>{s.value}</div>
-            <div style={styles.statLabel}>{s.label}</div>
+      <div className="screen-card">
+        <div className="screen-body">
+          {/* Profile info */}
+          <div className="profile-info-box">
+            <div className="profile-avatar">{user?.name?.[0]?.toUpperCase()}</div>
+            <div style={{ flex: 1 }}>
+              <div className="profile-name">{user?.name}</div>
+              <div className="profile-email">{user?.email}</div>
+            </div>
+            <button className="logout-btn" onClick={onLogout}>Logout</button>
           </div>
-        ))}
-      </div>
 
-      {total > 0 && (
-        <div style={styles.accSection}>
-          <div style={styles.accLabel}>Overall Accuracy</div>
-          <div style={styles.accBar}>
-            <div style={{ ...styles.accFill, width: `${accuracy}%` }} />
-          </div>
-          <div style={styles.accPct}>{accuracy}%</div>
-        </div>
-      )}
-
-      <div style={styles.tabs}>
-        {["overview", "history"].map((t) => (
-          <button
-            key={t}
-            style={{ ...styles.tab, ...(tab === t ? styles.tabActive : {}) }}
-            onClick={() => setTab(t)}
-          >
-            {t === "overview" ? "📊 By Category" : "📋 History"}
-          </button>
-        ))}
-      </div>
-
-      {tab === "overview" && (
-        <div style={styles.catList}>
-          {/* Word categories */}
-          {Object.keys(catStats).length > 0 && (
-            <div style={styles.overviewSectionLabel}>🎧 Word by Listening</div>
-          )}
-          {Object.entries(catStats).map(([cat, stats]) => {
-            const pct = Math.round((stats.correct / stats.total) * 100);
-            return (
-              <div key={cat} style={styles.catStatRow}>
-                <div style={styles.catStatLetter}>{cat}</div>
-                <div style={styles.catStatInfo}>
-                  <div style={styles.catStatBar}>
-                    <div style={{ ...styles.catStatFill, width: `${pct}%` }} />
-                  </div>
-                  <div style={styles.catStatNums}>
-                    {stats.correct}/{stats.total} correct ({pct}%)
-                  </div>
+          {/* Stats */}
+          <div className="results-summary">
+            <div className="stats-row">
+              {[
+                { label: "Attempted", value: total,        color: "var(--primary)" },
+                { label: "Correct",   value: correct,      color: "#22c55e" },
+                { label: "Wrong",     value: wrong,        color: "#ef4444" },
+                { label: "Accuracy",  value: `${accuracy}%`, color: "var(--dark)" },
+              ].map(s => (
+                <div key={s.label} className="stat-box">
+                  <span className="stat-value" style={{ color: s.color }}>{s.value}</span>
+                  <span className="stat-label">{s.label}</span>
                 </div>
-              </div>
-            );
-          })}
+              ))}
+            </div>
+          </div>
 
-          {/* Shadowing levels */}
-          {Object.keys(levelStats).length > 0 && (
-            <div style={{ ...styles.overviewSectionLabel, marginTop: Object.keys(catStats).length > 0 ? 16 : 0 }}>
-              🗣️ Shadowing Practice
+          {total > 0 && (
+            <div className="acc-bar-wrap">
+              <div className="acc-bar"><div className="acc-fill" style={{ width: `${accuracy}%` }} /></div>
             </div>
           )}
-          {Object.entries(levelStats).map(([levelName, stats]) => {
-            const pct = Math.round((stats.correct / stats.total) * 100);
-            return (
-              <div key={levelName} style={styles.catStatRow}>
-                <div style={{ ...styles.catStatLetter, fontSize: 11, background: "#ede9fe", color: "#7c3aed" }}>
-                  {levelName.slice(0, 3)}
-                </div>
-                <div style={styles.catStatInfo}>
-                  <div style={styles.catStatBar}>
-                    <div style={{ ...styles.catStatFill, width: `${pct}%`, background: "linear-gradient(90deg, #7c3aed, #8b5cf6)" }} />
-                  </div>
-                  <div style={styles.catStatNums}>
-                    {levelName} — {stats.correct}/{stats.total} correct ({pct}%)
-                  </div>
-                </div>
-              </div>
-            );
-          })}
 
-          {Object.keys(catStats).length === 0 && Object.keys(levelStats).length === 0 && (
-            <p style={styles.emptyMsg}>No quiz attempts yet. Start playing! 🎮</p>
+          {/* Tabs */}
+          <div className="tabs-row">
+            {["overview", "history"].map(t => (
+              <button key={t} className={`tab-btn${tab === t ? " active" : ""}`} onClick={() => setTab(t)}>
+                {t === "overview" ? "📊 By Category" : "📋 History"}
+              </button>
+            ))}
+          </div>
+
+          {tab === "overview" && (
+            <div>
+              {Object.keys(catStats).length > 0 && <div className="results-section-title">🎧 Word by Listening</div>}
+              {Object.entries(catStats).map(([cat, stats]) => {
+                const pct = Math.round((stats.correct / stats.total) * 100);
+                return (
+                  <div key={cat} className="cat-stat-row">
+                    <div className="cat-stat-letter">{cat}</div>
+                    <div className="cat-stat-bar-wrap">
+                      <div className="cat-stat-bar"><div className="cat-stat-fill" style={{ width: `${pct}%` }} /></div>
+                      <div className="cat-stat-nums">{stats.correct}/{stats.total} correct ({pct}%)</div>
+                    </div>
+                  </div>
+                );
+              })}
+              {Object.keys(levelStats).length > 0 && <div className="results-section-title" style={{ marginTop: 16 }}>🗣️ Shadowing Practice</div>}
+              {Object.entries(levelStats).map(([levelName, stats]) => {
+                const pct = Math.round((stats.correct / stats.total) * 100);
+                return (
+                  <div key={levelName} className="cat-stat-row">
+                    <div className="cat-stat-letter" style={{ fontSize: 10, background: "#ede9fe", color: "#7c3aed", border: "2px solid #7c3aed" }}>{levelName.slice(0,3)}</div>
+                    <div className="cat-stat-bar-wrap">
+                      <div className="cat-stat-bar"><div className="cat-stat-fill" style={{ width: `${pct}%`, background: "#7c3aed" }} /></div>
+                      <div className="cat-stat-nums">{levelName} — {stats.correct}/{stats.total} correct ({pct}%)</div>
+                    </div>
+                  </div>
+                );
+              })}
+              {Object.keys(catStats).length === 0 && Object.keys(levelStats).length === 0 && (
+                <p className="empty-msg">No quiz attempts yet. Start playing! 🎮</p>
+              )}
+            </div>
+          )}
+
+          {tab === "history" && (
+            <div>
+              {combinedHistory.length === 0 && <p className="empty-msg">No attempts yet. Start playing! 🎮</p>}
+              {combinedHistory.map((a, i) => {
+                const isWord = a._type === "word";
+                return (
+                  <div key={i} className="history-row">
+                    <div className="history-dot" style={{ background: a.is_correct ? "#22c55e" : "#ef4444" }} />
+                    <div style={{ flex: 1 }}>
+                      {isWord ? (
+                        <>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <span>🎧</span>
+                            <span className="history-word">{a.word}</span>
+                            <span className="history-cat">[{a.category}]</span>
+                          </div>
+                          {!a.is_correct && <span className="history-wrong">You wrote: "{a.user_answer}"</span>}
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <span>🗣️</span>
+                            <span className="history-cat" style={{ color: "#7c3aed" }}>{a.level?.name || `Level ${a.level_id}`}</span>
+                          </div>
+                          <span className="history-word" style={{ fontSize: 13 }}>
+                            {a.sentence.length > 60 ? a.sentence.slice(0, 60) + "…" : a.sentence}
+                          </span>
+                          {!a.is_correct && <span className="history-wrong">You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"</span>}
+                        </>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div className="result-badge" style={{ background: a.is_correct ? "#dcfce7" : "#fee2e2", color: a.is_correct ? "#16a34a" : "#dc2626" }}>
+                        {a.is_correct ? "✓" : "✗"}
+                      </div>
+                      <button className="del-btn" onClick={() => isWord ? handleDeleteWord(a.word, a.category) : handleDeleteShadowing(a.id)} title="Delete">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
-      )}
-
-      {tab === "history" && (
-        <div style={styles.historyList}>
-          {combinedHistory.length === 0 && (
-            <p style={styles.emptyMsg}>No attempts yet. Start playing! 🎮</p>
-          )}
-          {combinedHistory.map((a, i) => {
-            const isWord = a._type === "word";
-            return (
-              <div key={i} style={styles.historyRow}>
-                <div
-                  style={{
-                    ...styles.historyDot,
-                    background: a.is_correct ? "#22c55e" : "#ef4444",
-                  }}
-                />
-                <div style={styles.historyInfo}>
-                  {isWord ? (
-                    <>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <span style={styles.historyTypeBadgeWord}>🎧</span>
-                        <span style={styles.historyWord}>{a.word}</span>
-                        <span style={styles.historyCat}>[{a.category}]</span>
-                      </div>
-                      {!a.is_correct && (
-                        <span style={styles.historyWrong}>
-                          You wrote: "{a.user_answer}"
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <span style={styles.historyTypeBadgeShadow}>🗣️</span>
-                        <span style={{ ...styles.historyCat, color: "#7c3aed" }}>
-                          {a.level?.name || `Level ${a.level_id}`}
-                        </span>
-                      </div>
-                      <span style={{ ...styles.historyWord, fontSize: 13, fontWeight: 600 }}>
-                        {a.sentence.length > 60 ? a.sentence.slice(0, 60) + "…" : a.sentence}
-                      </span>
-                      {!a.is_correct && (
-                        <span style={styles.historyWrong}>
-                          You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"
-                        </span>
-                      )}
-                    </>
-                  )}
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div
-                    style={{
-                      ...styles.historyBadge,
-                      background: a.is_correct ? "#dcfce7" : "#fee2e2",
-                      color: a.is_correct ? "#16a34a" : "#dc2626",
-                    }}
-                  >
-                    {a.is_correct ? "✓" : "✗"}
-                  </div>
-                  <button
-                    onClick={() =>
-                      isWord
-                        ? handleDeleteWord(a.word, a.category)
-                        : handleDeleteShadowing(a.id)
-                    }
-                    style={{
-                      background: "#fee2e2",
-                      border: "1.5px solid #fca5a5",
-                      cursor: "pointer",
-                      color: "#dc2626",
-                      fontSize: 13,
-                      padding: "4px 8px",
-                      borderRadius: 8,
-                      lineHeight: 1,
-                    }}
-                    title="Delete"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                      <path d="M10 11v6M14 11v6" />
-                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -1145,115 +1009,52 @@ function MyGroupsScreen({ user, onOpenGroup, onBack }) {
   }
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <button style={styles.backBtn} onClick={onBack}>← Back</button>
-        <h2 style={styles.screenTitle}>My Groups</h2>
-        <div style={{ width: 60 }} />
-      </div>
-
-      {blocked ? (
-        <div style={styles.lockedBanner}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>🔒</div>
-          <div style={{ fontSize: 17, fontWeight: 800, color: "#dc2626", marginBottom: 6 }}>
-            Feature Locked
-          </div>
-          <div style={{ fontSize: 13, color: "#94a3b8" }}>
-            An admin has restricted your ability to create groups.
-          </div>
+    <div className="app-screen">
+      <div className="screen-head">
+        <div className="screen-head-row">
+          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
         </div>
-      ) : (
-        <>
-          {/* New Group Form */}
-          {showForm ? (
-            <div style={styles.groupForm}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "#1a1a2e", marginBottom: 12 }}>
-                New Group
-              </div>
-              <input
-                style={styles.groupInput}
-                placeholder="Group name *"
-                value={formName}
-                onChange={(e) => setFormName(e.target.value)}
-                maxLength={100}
-                autoFocus
-              />
-              <textarea
-                style={{ ...styles.groupInput, minHeight: 72, resize: "vertical", marginTop: 8 }}
-                placeholder="Description (optional)"
-                value={formDesc}
-                onChange={(e) => setFormDesc(e.target.value)}
-                maxLength={500}
-              />
-              <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                <button
-                  style={{ ...styles.submitBtn, flex: 1 }}
-                  onClick={handleCreate}
-                  disabled={saving || !formName.trim()}
-                >
-                  {saving ? "Creating..." : "Create Group"}
-                </button>
-                <button
-                  style={{ ...styles.backBtn, flex: 0 }}
-                  onClick={() => { setShowForm(false); setFormName(""); setFormDesc(""); }}
-                >
-                  Cancel
-                </button>
+        <h1 className="screen-head-title">My Groups</h1>
+      </div>
+      <div className="screen-card">
+        <div className="screen-body">
+          {blocked ? (
+            <div className="locked-banner">🔒 An admin has restricted your ability to create groups.</div>
+          ) : showForm ? (
+            <div style={{ marginBottom: 16 }}>
+              <div className="results-section-title" style={{ marginBottom: 10 }}>New Group</div>
+              <input className="form-input" placeholder="Group name *" value={formName} onChange={e => setFormName(e.target.value)} maxLength={100} autoFocus />
+              <textarea className="form-input" style={{ minHeight: 72, resize: "vertical", paddingTop: 14 }} placeholder="Description (optional)" value={formDesc} onChange={e => setFormDesc(e.target.value)} maxLength={500} />
+              <div style={{ display: "flex", gap: 0, marginTop: 4 }}>
+                <button className="nav-btn primary" onClick={handleCreate} disabled={saving || !formName.trim()}>{saving ? "Creating…" : "Create Group"}</button>
+                <button className="nav-btn" onClick={() => { setShowForm(false); setFormName(""); setFormDesc(""); }}>Cancel</button>
               </div>
             </div>
           ) : (
-            <button
-              style={{ ...styles.submitBtn, marginBottom: 20 }}
-              onClick={() => setShowForm(true)}
-            >
-              + New Group
+            <button className="inline-btn primary" onClick={() => setShowForm(true)}>
+              <i className="fa-solid fa-plus" /> New Group
             </button>
           )}
-
-          {groups.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "40px 0", color: "#94a3b8" }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>📁</div>
-              <div style={{ fontSize: 15, fontWeight: 600 }}>No groups yet</div>
-              <div style={{ fontSize: 13, marginTop: 4 }}>Create your first group to get started</div>
+          {!blocked && groups.length === 0 && !showForm && <p className="empty-msg">📁 No groups yet. Create your first group!</p>}
+          {groups.map(g => (
+            <div key={g.id} className="group-card" onClick={() => onOpenGroup(g)}>
+              <div style={{ flex: 1 }}>
+                <div className="group-name">{g.name}</div>
+                {g.description && <div className="group-meta">{g.description.length > 70 ? g.description.slice(0,70)+"…" : g.description}</div>}
+                <div className="group-meta" style={{ color: "var(--primary)", fontWeight: 700, marginTop: 4 }}>{g.items_count} item{g.items_count !== 1 ? "s" : ""}</div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <i className="fa-solid fa-chevron-right" style={{ color: "var(--grey)" }} />
+                <button className="del-btn" onClick={e => handleDelete(g.id, e)} title="Delete">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                </button>
+              </div>
             </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {groups.map((g) => (
-                <div
-                  key={g.id}
-                  style={styles.groupCard}
-                  onClick={() => onOpenGroup(g)}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "#1a1a2e" }}>{g.name}</div>
-                    {g.description && (
-                      <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 3 }}>
-                        {g.description.length > 70 ? g.description.slice(0, 70) + "…" : g.description}
-                      </div>
-                    )}
-                    <div style={{ fontSize: 12, color: "#6366f1", fontWeight: 600, marginTop: 6 }}>
-                      {g.items_count} item{g.items_count !== 1 ? "s" : ""}
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 18, color: "#94a3b8" }}>›</span>
-                    <button
-                      style={styles.groupDeleteBtn}
-                      onClick={(e) => handleDelete(g.id, e)}
-                      title="Delete group"
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                        <path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1310,127 +1111,66 @@ function GroupDetailScreen({ group, onStartQuiz, onBack, onGroupUpdated }) {
   };
 
 
-  if (loading) {
-    return (
-      <div style={styles.screen}>
-        <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>Loading...</div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="app-screen" style={{ alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "#fff", fontSize: 20, fontFamily: "var(--font)" }}>Loading…</p>
+    </div>
+  );
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <button style={styles.backBtn} onClick={onBack}>← Back</button>
-        <h2 style={{ ...styles.screenTitle, maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {group.name}
-        </h2>
-        <div style={{ width: 60 }} />
+    <div className="app-screen">
+      <div className="screen-head">
+        <div className="screen-head-row">
+          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+          <span className="score-badge">{items.length} items</span>
+        </div>
+        <h1 className="screen-head-title" style={{ fontSize: "clamp(20px,5vw,36px)" }}>{group.name}</h1>
+        {group.description && <p className="screen-head-sub">{group.description}</p>}
       </div>
-
-      {group.description && (
-        <p style={{ fontSize: 13, color: "#64748b", marginBottom: 16 }}>{group.description}</p>
-      )}
-
-      {/* Stats row */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-        <div style={{ ...styles.statCard, flex: 1 }}>
-          <div style={{ ...styles.statValue, fontSize: 20, color: "#6366f1" }}>{items.length}</div>
-          <div style={styles.statLabel}>Items</div>
-        </div>
-      </div>
-
-      {/* Quiz button */}
-      {items.length > 0 && (
-        <button
-          style={{ ...styles.submitBtn, background: "linear-gradient(135deg, #6366f1, #7c3aed)", marginBottom: 16 }}
-          onClick={() => onStartQuiz(items)}
-        >
-          🎧 Start Quiz ({items.length} items)
-        </button>
-      )}
-
-      {blocked && (
-        <div style={styles.lockedBanner}>
-          <div style={{ fontSize: 24, marginBottom: 8 }}>🔒</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#dc2626" }}>Adding items is locked by admin</div>
-        </div>
-      )}
-
-      {/* Add item form */}
-      {!blocked && (
-        showForm ? (
-          <div style={styles.groupForm}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#1a1a2e", marginBottom: 10 }}>Add Item</div>
-            <input
-              style={styles.groupInput}
-              placeholder="Enter word or sentence *"
-              value={itemContent}
-              onChange={(e) => setItemContent(e.target.value)}
-              autoFocus
-            />
-            <input
-              style={{ ...styles.groupInput, marginTop: 8 }}
-              placeholder="Description / hint (optional)"
-              value={itemDesc}
-              onChange={(e) => setItemDesc(e.target.value)}
-            />
-            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-              <button
-                style={{ ...styles.submitBtn, flex: 1 }}
-                onClick={handleAddItem}
-                disabled={saving || !itemContent.trim()}
-              >
-                {saving ? "Adding..." : "Add Item"}
-              </button>
-              <button
-                style={{ ...styles.backBtn }}
-                onClick={() => { setShowForm(false); setItemContent(""); setItemDesc(""); }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            style={{ ...styles.backBtn, width: "100%", marginBottom: 16, padding: "10px", textAlign: "center" }}
-            onClick={() => setShowForm(true)}
-          >
-            + Add Word or Sentence
-          </button>
-        )
-      )}
-
-      {/* Items list */}
-      {items.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "32px 0", color: "#94a3b8" }}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>📝</div>
-          <div style={{ fontSize: 14 }}>No items yet. Add your first word or sentence.</div>
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {items.map((item) => (
-            <div key={item.id} style={styles.groupItemRow}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#1a1a2e" }}>{item.content}</div>
-                {item.description && (
-                  <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>{item.description}</div>
-                )}
+      <div className="screen-card">
+        <div className="screen-body">
+          {blocked && <div className="locked-banner">🔒 Adding items is locked by admin.</div>}
+          {!blocked && (showForm ? (
+            <div style={{ marginBottom: 16 }}>
+              <div className="results-section-title" style={{ marginBottom: 10 }}>Add Item</div>
+              <input className="form-input" placeholder="Word or sentence *" value={itemContent} onChange={e => setItemContent(e.target.value)} autoFocus />
+              <input className="form-input" placeholder="Description / hint (optional)" value={itemDesc} onChange={e => setItemDesc(e.target.value)} />
+              <div style={{ display: "flex" }}>
+                <button className="nav-btn primary" onClick={handleAddItem} disabled={saving || !itemContent.trim()}>{saving ? "Adding…" : "Add Item"}</button>
+                <button className="nav-btn" onClick={() => { setShowForm(false); setItemContent(""); setItemDesc(""); }}>Cancel</button>
               </div>
-              <button
-                style={styles.groupDeleteBtn}
-                onClick={() => handleDeleteItem(item.id)}
-                title="Delete item"
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                  <path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                </svg>
-              </button>
             </div>
+          ) : (
+            <button className="inline-btn primary" onClick={() => setShowForm(true)}>
+              <i className="fa-solid fa-plus" /> Add Word or Sentence
+            </button>
           ))}
+          {items.length === 0 ? (
+            <p className="empty-msg">📝 No items yet. Add your first word or sentence.</p>
+          ) : (
+            items.map(item => (
+              <div key={item.id} className="word-item">
+                <div style={{ flex: 1 }}>
+                  <div className="word-content">{item.content}</div>
+                  {item.description && <div className="word-desc">{item.description}</div>}
+                </div>
+                <button className="del-btn" onClick={() => handleDeleteItem(item.id)} title="Delete">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                </button>
+              </div>
+            ))
+          )}
         </div>
-      )}
+        {items.length > 0 && (
+          <div className="screen-nav">
+            <button className="primary" onClick={() => onStartQuiz(items)}>
+              <i className="fa-solid fa-play" /> START QUIZ ({items.length} items)
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -1511,174 +1251,89 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
   };
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.quizHeader}>
-        <button style={styles.backBtn} onClick={onBack}>← Back</button>
-        <div style={styles.quizMeta}>
-          <span style={{ ...styles.quizCat, background: "#eef2ff", color: "#6366f1" }}>
-            {group.name}
-          </span>
-          <span style={styles.quizScore}>⭐ {score} pts</span>
+    <div className="quiz-root">
+      <div className="quiz-header">
+        <div className="quiz-track"><div className="quiz-track-fill" style={{ width: `${progressPct}%` }} /></div>
+        <div className="quiz-steprow">
+          <div className="quiz-timer" style={{ border: "solid 8px #6366f1" }}><span style={{ color: "#6366f1" }}>{index+1}/{words.length}</span></div>
         </div>
       </div>
-
-      <div style={styles.progressBar}>
-        <div style={{ ...styles.progressFill, width: `${progressPct}%`, background: "linear-gradient(90deg, #6366f1, #7c3aed)" }} />
-      </div>
-      <div style={styles.progressLabel}>{index + 1} / {words.length}</div>
-
-      <div style={styles.audioSection}>
-        <div style={styles.audioHint}>{current.description || "Listen carefully"}</div>
-        <button
-          style={{
-            ...styles.audioBtn,
-            background: "linear-gradient(135deg, #6366f1, #7c3aed)",
-            boxShadow: "0 8px 24px rgba(99,102,241,0.35)",
-            ...(isPlaying ? styles.audioBtnPlaying : {}),
-          }}
-          onClick={playAudio}
-        >
-          <span style={styles.audioIcon}>{isPlaying ? "🔊" : "▶"}</span>
-          <span style={styles.audioBtnText}>{isPlaying ? "Playing..." : "Play Word"}</span>
-        </button>
-        <p style={styles.audioSub}>Press the button to hear the word, then type it below</p>
-      </div>
-
-      <div style={styles.inputSection}>
-        <input
-          ref={inputRef}
-          style={{
-            ...styles.wordInput,
-            borderColor: feedback === "correct" ? "#22c55e" : feedback === "wrong" ? "#ef4444" : "#e2e8f0",
-            boxShadow: feedback === "correct" ? "0 0 0 4px rgba(34,197,94,0.15)"
-              : feedback === "wrong" ? "0 0 0 4px rgba(239,68,68,0.15)" : "none",
-          }}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type the word you heard..."
-          readOnly={!!feedback}
-          autoComplete="off"
-          spellCheck={false}
-        />
-        {!feedback && (
-          <button style={styles.submitBtn} onClick={handleSubmit}>Check Answer →</button>
-        )}
-      </div>
-
-      {feedback === "correct" && (
-        <div style={styles.feedbackCorrect}>
-          <div style={styles.feedbackIcon}>✅</div>
-          <div style={styles.feedbackTitle}>Correct! +1 point</div>
-          <div style={styles.feedbackWord}>"{current.content}"</div>
-          <button style={styles.nextBtn} onClick={handleNext}>
-            {index + 1 >= words.length ? "See Results 🏆" : "Next Word →"}
+      <div className="quiz-card">
+        <div className="quiz-meta-row">
+          <button className="quiz-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+          <span className="quiz-score">📁 {group.name} &nbsp;|&nbsp; ⭐ {score} pts</span>
+        </div>
+        <h1 className="quiz-question">{current.description || "Listen and type the word"}</h1>
+        <div className="quiz-fieldset">
+          <button className={`quiz-option audio-btn${isPlaying ? " playing" : ""}`} onClick={playAudio}>
+            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"} quiz-option-icon`} />
+            <span className="quiz-option-label">{isPlaying ? "Playing…" : "Tap to hear"}</span>
           </button>
-        </div>
-      )}
-
-      {feedback === "wrong" && (
-        <div style={styles.feedbackWrong}>
-          <div style={styles.feedbackIcon}>❌</div>
-          <div style={styles.feedbackTitle}>Not quite!</div>
-          <div style={styles.feedbackCorrectWord}>
-            Correct: <strong style={{ color: "#f97316" }}>{current.content}</strong>
+          <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
+            <input ref={inputRef} className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
+              value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown}
+              placeholder="Type what you heard…" readOnly={!!feedback} autoComplete="off" spellCheck={false} />
           </div>
-          <div style={styles.feedbackYours}>Your answer: <em>{input}</em></div>
-          <button style={styles.nextBtnOrange} onClick={handleNext}>
-            {index + 1 >= words.length ? "See Results 🏆" : "Next Word →"}
-          </button>
         </div>
-      )}
-
-      {results.length > 0 && !feedback && (
-        <button
-          onClick={() => onComplete([...results])}
-          style={{
-            marginTop: 16, width: "100%", padding: "12px",
-            background: "transparent", border: "2px solid #e2e8f0",
-            borderRadius: 12, color: "#94a3b8", fontSize: 14, fontWeight: 600, cursor: "pointer",
-          }}
-        >
-          Finish Early
-        </button>
-      )}
+        {feedback === "correct" && <div className="quiz-feedback ok">✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp; <span style={{ color: "var(--primary)", fontWeight: 900 }}>"{current.content}"</span></div>}
+        {feedback === "wrong" && <div className="quiz-feedback bad">❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct: <strong style={{ color: "var(--primary)" }}>{current.content}</strong>&nbsp;— You wrote: <em>{input}</em></div>}
+        <div className="quiz-nav">
+          {results.length > 0 && <button onClick={() => onComplete([...results])}>← FINISH EARLY</button>}
+          {!feedback
+            ? <button className="next-btn" onClick={handleSubmit}>CHECK ANSWER <i className="fa-solid fa-arrow-right" /></button>
+            : <button className="next-btn" onClick={handleNext}>{index+1 >= words.length ? "SEE RESULTS 🏆" : <>NEXT WORD <i className="fa-solid fa-arrow-right" /></>}</button>
+          }
+        </div>
+      </div>
     </div>
   );
 }
 
 // ─── Group Results Screen ──────────────────────────────────────────────────────
 function GroupResultsScreen({ results, group, onHome, onRetry, onBack }) {
-  if (!results || results.length === 0) {
-    return (
-      <div style={styles.screen}>
-        <div style={{ textAlign: "center", padding: "40px" }}>No results to display</div>
-      </div>
-    );
-  }
+  if (!results || results.length === 0) return (
+    <div className="app-screen" style={{ alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "#fff", fontFamily: "var(--font)" }}>No results to display.</p>
+    </div>
+  );
 
   const total = results.length;
-  const correct = results.filter((r) => r.is_correct).length;
+  const correct = results.filter(r => r.is_correct).length;
   const wrong = total - correct;
   const accuracy = Math.round((correct / total) * 100);
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <h2 style={styles.screenTitle}>Quiz Results 🎉</h2>
+    <div className="app-screen">
+      <div className="screen-head">
+        <h1 className="screen-head-title">Quiz Results 🎉</h1>
+        <p className="screen-head-sub">Group: <strong style={{ color: "#fff" }}>{group?.name}</strong></p>
       </div>
-
-      <div style={{ ...styles.resultsSummary, background: "linear-gradient(135deg, #6366f1, #7c3aed)" }}>
-        <div style={styles.resultsCategory}>Group: <strong>{group?.name}</strong></div>
-        <div style={styles.resultsStats}>
-          {[
-            { label: "Total", value: total, color: "#fff" },
-            { label: "Correct", value: correct, color: "#bbf7d0" },
-            { label: "Wrong", value: wrong, color: "#fecaca" },
-            { label: "Accuracy", value: `${accuracy}%`, color: "#fff" },
-          ].map((s) => (
-            <div key={s.label} style={styles.statItem}>
-              <div style={{ ...styles.statValue, color: s.color }}>{s.value}</div>
-              <div style={styles.statLabel}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={styles.accuracySection}>
-        <div style={styles.accBar}>
-          <div style={{ ...styles.accFill, width: `${accuracy}%`, background: "linear-gradient(90deg, #6366f1, #7c3aed)" }} />
-        </div>
-      </div>
-
-      <div style={styles.resultsTitle}>Attempted Words</div>
-      <div style={styles.resultsList}>
-        {results.map((r, i) => (
-          <div key={i} style={styles.resultItem}>
-            <div style={{ display: "flex", gap: 10, alignItems: "center", flex: 1 }}>
-              <div style={{ ...styles.resultDot, background: r.is_correct ? "#22c55e" : "#ef4444" }} />
-              <div style={{ flex: 1 }}>
-                <div style={styles.resultWord}>{i + 1}. {r.word}</div>
-                {!r.is_correct && (
-                  <div style={styles.resultYourAnswer}>You wrote: <strong>"{r.user_answer}"</strong></div>
-                )}
-              </div>
-            </div>
-            <div style={{ ...styles.resultBadge, background: r.is_correct ? "#dcfce7" : "#fee2e2", color: r.is_correct ? "#16a34a" : "#dc2626" }}>
-              {r.is_correct ? "✓" : "✗"}
+      <div className="screen-card">
+        <div className="screen-body">
+          <div className="results-summary">
+            <div className="stats-row">
+              {[{ label:"Total",value:total,color:"var(--primary)" },{ label:"Correct",value:correct,color:"#22c55e" },{ label:"Wrong",value:wrong,color:"#ef4444" },{ label:"Accuracy",value:`${accuracy}%`,color:"var(--dark)" }].map(s => (
+                <div key={s.label} className="stat-box"><span className="stat-value" style={{ color: s.color }}>{s.value}</span><span className="stat-label">{s.label}</span></div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-
-      <div style={styles.resultsButtons}>
-        <button style={{ ...styles.retryBtn, background: "linear-gradient(135deg, #6366f1, #7c3aed)" }} onClick={onRetry}>
-          🔄 Retry This Quiz
-        </button>
-        <button style={{ ...styles.retryBtn, background: "#f1f5f9", color: "#475569" }} onClick={onBack}>
-          ← Back to Group
-        </button>
-        <button style={styles.homeBtn} onClick={onHome}>🏠 Back to Home</button>
+          <div className="acc-bar-wrap"><div className="acc-bar"><div className="acc-fill" style={{ width: `${accuracy}%` }} /></div></div>
+          <div className="results-section-title">Attempted Words</div>
+          <div className="result-list">
+            {results.map((r, i) => (
+              <div key={i} className="result-row">
+                <div className="result-dot" style={{ background: r.is_correct ? "#22c55e" : "#ef4444" }} />
+                <div style={{ flex: 1 }}><div className="result-word">{i+1}. {r.word}</div>{!r.is_correct && <div className="result-your">You wrote: <strong>"{r.user_answer}"</strong></div>}</div>
+                <div className="result-badge" style={{ background: r.is_correct ? "#dcfce7" : "#fee2e2", color: r.is_correct ? "#16a34a" : "#dc2626" }}>{r.is_correct ? "✓" : "✗"}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="screen-nav">
+          <button onClick={onBack}><i className="fa-solid fa-arrow-left" /> GROUP</button>
+          <button onClick={onRetry}><i className="fa-solid fa-rotate-right" /> RETRY</button>
+          <button className="primary" onClick={onHome}><i className="fa-solid fa-house" /> HOME</button>
+        </div>
       </div>
     </div>
   );
@@ -1715,70 +1370,34 @@ function ShadowingLevelScreen({ onSelect, onBack }) {
   ];
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <button style={styles.backBtn} onClick={onBack}>← Back</button>
-        <h2 style={styles.screenTitle}>Shadowing Practice</h2>
-        <div style={{ width: 60 }} />
+    <div className="app-screen">
+      <div className="screen-head">
+        <div className="screen-head-row">
+          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+        </div>
+        <h1 className="screen-head-title">Shadowing Practice</h1>
+        <p className="screen-head-sub">🗣️ Listen to sentences and repeat them aloud</p>
       </div>
-
-      <div style={styles.shadowingHeroBanner}>
-        <div>
-          <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "#fff" }}>
-            Train your speaking
-          </h3>
-          <p style={{ margin: "6px 0 0", fontSize: 13, color: "rgba(255,255,255,0.85)" }}>
-            Listen to sentences and repeat them aloud
-          </p>
-        </div>
-        <div style={{ fontSize: 40 }}>🗣️</div>
-      </div>
-
-      <h3 style={styles.sectionLabel}>Select a Level</h3>
-
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
-          Loading levels...
-        </div>
-      ) : levels.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
-          No levels available yet. Check back soon!
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {levels.map((level, i) => {
-            const color = levelColors[i % levelColors.length];
+      <div className="screen-card">
+        <div className="screen-body">
+          <h3 className="section-title">Select a Level</h3>
+          {loading ? <p className="empty-msg">Loading levels…</p>
+          : levels.length === 0 ? <p className="empty-msg">No levels available yet.</p>
+          : levels.map((level, i) => {
+            const dots = ["#22c55e","#3b82f6","var(--primary)","#8b5cf6","#ec4899","#f97316"];
             return (
-              <button
-                key={level.id}
-                style={{
-                  background: color.bg,
-                  border: "none",
-                  borderRadius: 18,
-                  padding: "20px 24px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  boxShadow: `0 8px 24px ${color.shadow}`,
-                  transition: "transform 0.15s",
-                }}
-                onClick={() => onSelect(level)}
-              >
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>
-                    {level.name}
-                  </div>
-                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>
-                    Tap to start practice
-                  </div>
+              <button key={level.id} className="level-btn" onClick={() => onSelect(level)}>
+                <div className="level-btn-dot" style={{ background: dots[i % dots.length] }} />
+                <div style={{ flex: 1, textAlign: "left" }}>
+                  <div className="level-btn-name">{level.name}</div>
+                  <div className="level-btn-sub">Tap to start practice</div>
                 </div>
-                <div style={{ fontSize: 28, color: "rgba(255,255,255,0.9)" }}>▶</div>
+                <i className="fa-solid fa-play" style={{ color: "var(--grey)", fontSize: 18 }} />
               </button>
             );
           })}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -1932,263 +1551,142 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
     }
   };
 
-  if (loading) {
-    return (
-      <div style={styles.screen}>
-        <div style={{ textAlign: "center", padding: "40px" }}>Loading sentences...</div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="quiz-root" style={{ alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "#fff", fontSize: 20, fontFamily: "var(--font)" }}>Loading sentences…</p>
+    </div>
+  );
+  if (sentences.length === 0) return (
+    <div className="quiz-root" style={{ alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "#fff", fontSize: 20, fontFamily: "var(--font)" }}>No sentences for this level.</p>
+      <button onClick={onBack} style={{ marginTop: 16, padding: "10px 24px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer" }}>Go Back</button>
+    </div>
+  );
 
-  if (sentences.length === 0) {
-    return (
-      <div style={styles.screen}>
-        <div style={{ textAlign: "center", padding: "40px" }}>
-          No sentences found for this level.
-        </div>
-      </div>
-    );
-  }
-
-  const progressPct = Math.round((index / sentences.length) * 100);
+  const progressPct = Math.round(((index + 1) / sentences.length) * 100);
+  const STEP_COUNT = 4;
+  const stepDots = Array.from({ length: STEP_COUNT }, (_, i) => index >= Math.floor((i / STEP_COUNT) * sentences.length));
+  const barPct = (stepDots.filter(Boolean).length / STEP_COUNT) * 100;
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.quizHeader}>
-        <button style={styles.backBtn} onClick={onBack}>← Back</button>
-        <div style={styles.quizMeta}>
-          <span style={{ ...styles.quizCat, background: "#ede9fe", color: "#7c3aed" }}>
-            {level.name}
-          </span>
-          <span style={styles.quizScore}>⭐ {score} pts</span>
+    <div className="quiz-root">
+      <div className="quiz-header">
+        <div className="quiz-track"><div className="quiz-track-fill" style={{ width: `${barPct}%` }} /></div>
+        <div className="quiz-steprow">
+          {stepDots.slice(0,2).map((active, i) => (
+            <div key={i} className={`quiz-dot${active ? " active" : ""}`}><span className="quiz-dot-num">{i+1}</span></div>
+          ))}
+          <div className="quiz-timer"><span>{timeLeft ?? sentences.length - index}</span></div>
+          {stepDots.slice(2).map((active, i) => (
+            <div key={i+2} className={`quiz-dot${active ? " active" : ""}`}><span className="quiz-dot-num">{i+3}</span></div>
+          ))}
         </div>
       </div>
-
-      <div style={styles.progressBar}>
-        <div style={{ ...styles.progressFill, width: `${progressPct}%`, background: "linear-gradient(90deg, #7c3aed, #8b5cf6)" }} />
-      </div>
-      <div style={styles.progressLabel}>
-        {index + 1} / {sentences.length}
-      </div>
-
-      {/* Listen Section */}
-      <div style={styles.audioSection}>
-        <div style={styles.audioHint}>Listen carefully to the sentence</div>
-        <button
-          style={{
-            ...styles.audioBtn,
-            background: "linear-gradient(135deg, #7c3aed, #8b5cf6)",
-            boxShadow: "0 8px 24px rgba(124,58,237,0.35)",
-            ...(isPlaying ? styles.audioBtnPlaying : {}),
-          }}
-          onClick={playSentence}
-        >
-          <span style={styles.audioIcon}>{isPlaying ? "🔊" : "▶"}</span>
-          <span style={styles.audioBtnText}>
-            {isPlaying ? "Playing..." : "Play Sentence"}
-          </span>
-        </button>
-        <p style={styles.audioSub}>
-          Press the button to hear the sentence, then repeat it aloud
-        </p>
-      </div>
-
-      {/* Voice Input Section */}
-      {!feedback && (
-        <div style={{ marginBottom: 16 }}>
-          <div style={styles.voiceInputArea}>
-            {transcript ? (
-              <div style={{ ...styles.transcriptText, color: isListening ? "#7c3aed" : undefined }}>
-                "{transcript}"
-                {isListening && <span style={{ marginLeft: 6, opacity: 0.6, fontSize: 12 }}>...</span>}
-              </div>
-            ) : (
-              <div style={styles.transcriptPlaceholder}>
-                {isListening ? "Listening... speak now" : "Your spoken answer will appear here"}
-              </div>
-            )}
-          </div>
-
-          {micError && (
-            <div style={styles.micError}>{micError}</div>
+      <div className="quiz-card">
+        <div className="quiz-meta-row">
+          <button className="quiz-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+          <span className="quiz-score">🗣️ {level.name} &nbsp;|&nbsp; ⭐ {score} pts &nbsp;|&nbsp; {index+1}/{sentences.length}</span>
+        </div>
+        <h1 className="quiz-question">Listen and repeat the sentence aloud</h1>
+        <div className="quiz-fieldset">
+          {/* Play button */}
+          <button className={`quiz-option audio-btn${isPlaying ? " playing" : ""}`} onClick={playSentence}>
+            <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"} quiz-option-icon`} />
+            <span className="quiz-option-label">{isPlaying ? "Playing…" : "Tap to hear sentence"}</span>
+          </button>
+          {/* Transcript / mic area */}
+          {!feedback && (
+            <div className="quiz-option" style={{ flexDirection: "column", alignItems: "flex-start", height: "auto", minHeight: 70, padding: "14px 20px", gap: 0 }}>
+              <span className="quiz-option-label" style={{ fontSize: "clamp(13px,3vw,18px)", fontStyle: transcript ? "normal" : "italic" }}>
+                {transcript ? `"${transcript}"` : isListening ? "Listening… speak now" : "Your spoken answer will appear here"}
+              </span>
+              {micError && <span style={{ fontSize: 12, color: "#ef4444", marginTop: 4 }}>{micError}</span>}
+            </div>
           )}
-
-          <button
-            style={{
-              ...styles.micBtn,
-              ...(isListening ? styles.micBtnListening : {}),
-            }}
-            onClick={startListening}
-            disabled={isListening || isPlaying}
-          >
-            <span style={{ fontSize: 32 }}>{isListening ? "🎙️" : "🎤"}</span>
-            <span style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>
-              {isListening ? "Listening..." : "Tap to Speak"}
-            </span>
-          </button>
+          {/* Mic button */}
+          {!feedback && (
+            <button
+              className={`quiz-option audio-btn${isListening ? " playing" : ""}`}
+              onClick={startListening}
+              disabled={isListening || isPlaying}
+              style={{ borderColor: isListening ? "var(--primary)" : undefined }}
+            >
+              <i className={`fa-solid ${isListening ? "fa-microphone-lines" : "fa-microphone"} quiz-option-icon`} style={{ color: isListening ? "var(--primary)" : undefined }} />
+              <span className="quiz-option-label">{isListening ? "Listening…" : "Tap to Speak"}</span>
+            </button>
+          )}
         </div>
-      )}
-
-      {/* Feedback */}
-      {feedback === "correct" && (
-        <div style={styles.feedbackCorrect}>
-          <div style={styles.feedbackIcon}>✅</div>
-          <div style={styles.feedbackTitle}>Perfect! +1 point</div>
-          <div style={styles.feedbackWord}>"{current.sentence}"</div>
-          <button style={styles.nextBtn} onClick={handleNext}>
-            {index + 1 >= sentences.length ? "See Results 🏆" : "Next Sentence →"}
-          </button>
-          <button style={styles.tryAgainBtn} onClick={handleTryAgain}>
-            Try Again
-          </button>
-        </div>
-      )}
-
-      {feedback === "wrong" && (
-        <div style={styles.feedbackWrong}>
-          <div style={styles.feedbackIcon}>❌</div>
-          <div style={styles.feedbackTitle}>Not quite!</div>
-          <div style={styles.feedbackCorrectWord}>
-            Correct sentence: <strong style={{ color: "#f97316" }}>"{current.sentence}"</strong>
+        {feedback === "correct" && (
+          <div className="quiz-feedback ok">
+            ✅ &nbsp;<strong>Perfect! +1 pt</strong>&nbsp;
+            <span style={{ color: "var(--primary)", fontWeight: 700 }}>"{current.sentence}"</span>
           </div>
-          <div style={styles.feedbackYours}>You said: <em>"{transcript}"</em></div>
-          <button style={styles.nextBtnOrange} onClick={handleNext}>
-            {index + 1 >= sentences.length ? "See Results 🏆" : "Next Sentence →"}
-          </button>
-          <button style={styles.tryAgainBtn} onClick={handleTryAgain}>
-            Try Again Same Sentence
-          </button>
+        )}
+        {feedback === "wrong" && (
+          <div className="quiz-feedback bad">
+            ❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct: <strong style={{ color: "var(--primary)" }}>"{current.sentence}"</strong>&nbsp;— You said: <em>"{transcript}"</em>
+          </div>
+        )}
+        <div className="quiz-nav">
+          {attempts.length > 0 && !feedback && <button onClick={() => onComplete([...attempts])}>← FINISH EARLY</button>}
+          {feedback && <button onClick={handleTryAgain}>TRY AGAIN</button>}
+          {!feedback
+            ? null
+            : <button className="next-btn" onClick={handleNext}>{index+1 >= sentences.length ? "SEE RESULTS 🏆" : <>NEXT <i className="fa-solid fa-arrow-right" /></>}</button>
+          }
         </div>
-      )}
-
-      {attempts.length > 0 && !feedback && (
-        <button
-          onClick={() => onComplete([...attempts])}
-          style={{
-            marginTop: 16,
-            width: "100%",
-            padding: "12px",
-            background: "transparent",
-            border: "2px solid #e2e8f0",
-            borderRadius: 12,
-            color: "#94a3b8",
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          Finish Early
-        </button>
-      )}
+      </div>
     </div>
   );
 }
 
 // ─── Shadowing Results Screen ──────────────────────────────────────────────────
 function ShadowingResultsScreen({ results, level, onHome, onRetry }) {
-  if (!results || results.length === 0) {
-    return (
-      <div style={styles.screen}>
-        <div style={{ textAlign: "center", padding: "40px" }}>No results to display</div>
-      </div>
-    );
-  }
+  if (!results || results.length === 0) return (
+    <div className="app-screen" style={{ alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "#fff", fontFamily: "var(--font)" }}>No results to display.</p>
+    </div>
+  );
 
   const total = results.length;
-  const correct = results.filter((r) => r.is_correct).length;
+  const correct = results.filter(r => r.is_correct).length;
   const wrong = total - correct;
   const accuracy = Math.round((correct / total) * 100);
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.navRow}>
-        <h2 style={styles.screenTitle}>Shadowing Results 🎉</h2>
+    <div className="app-screen">
+      <div className="screen-head">
+        <h1 className="screen-head-title">Shadowing Results 🎉</h1>
+        <p className="screen-head-sub">Level: <strong style={{ color: "#fff" }}>{level?.name}</strong></p>
       </div>
-
-      <div style={styles.resultsSummary}>
-        <div style={styles.resultsCategory}>
-          Level: <strong>{level?.name}</strong>
-        </div>
-        <div style={styles.resultsStats}>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#7c3aed" }}>{total}</div>
-            <div style={styles.statLabel}>Total</div>
+      <div className="screen-card">
+        <div className="screen-body">
+          <div className="results-summary">
+            <div className="stats-row">
+              {[{ label:"Total",value:total,color:"var(--primary)" },{ label:"Correct",value:correct,color:"#22c55e" },{ label:"Wrong",value:wrong,color:"#ef4444" },{ label:"Accuracy",value:`${accuracy}%`,color:"var(--dark)" }].map(s => (
+                <div key={s.label} className="stat-box"><span className="stat-value" style={{ color: s.color }}>{s.value}</span><span className="stat-label">{s.label}</span></div>
+              ))}
+            </div>
           </div>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#22c55e" }}>{correct}</div>
-            <div style={styles.statLabel}>Correct</div>
-          </div>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#ef4444" }}>{wrong}</div>
-            <div style={styles.statLabel}>Wrong</div>
-          </div>
-          <div style={styles.statItem}>
-            <div style={{ ...styles.statValue, color: "#000" }}>{accuracy}%</div>
-            <div style={styles.statLabel}>Accuracy</div>
-          </div>
-        </div>
-      </div>
-
-      <div style={styles.accuracySection}>
-        <div style={styles.accBar}>
-          <div
-            style={{
-              ...styles.accFill,
-              width: `${accuracy}%`,
-              background: "linear-gradient(90deg, #7c3aed, #8b5cf6)",
-            }}
-          />
-        </div>
-      </div>
-
-      <div style={styles.resultsTitle}>Attempted Sentences</div>
-      <div style={styles.resultsList}>
-        {results.map((result, i) => (
-          <div key={i} style={styles.resultItem}>
-            <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", flex: 1 }}>
-              <div
-                style={{
-                  ...styles.resultDot,
-                  background: result.is_correct ? "#22c55e" : "#ef4444",
-                  marginTop: 4,
-                  flexShrink: 0,
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <div style={{ ...styles.resultWord, fontSize: 14 }}>
-                  {i + 1}. {result.sentence}
+          <div className="acc-bar-wrap"><div className="acc-bar"><div className="acc-fill" style={{ width: `${accuracy}%` }} /></div></div>
+          <div className="results-section-title">Attempted Sentences</div>
+          <div className="result-list">
+            {results.map((r, i) => (
+              <div key={i} className="result-row">
+                <div className="result-dot" style={{ background: r.is_correct ? "#22c55e" : "#ef4444", alignSelf: "flex-start", marginTop: 4 }} />
+                <div style={{ flex: 1 }}>
+                  <div className="result-word" style={{ fontSize: "clamp(13px,2.5vw,15px)" }}>{i+1}. {r.sentence}</div>
+                  {!r.is_correct && <div className="result-your">You said: <strong>"{r.user_answer}"</strong></div>}
                 </div>
-                {!result.is_correct && (
-                  <div style={styles.resultYourAnswer}>
-                    You said: <strong>"{result.user_answer}"</strong>
-                  </div>
-                )}
+                <div className="result-badge" style={{ background: r.is_correct ? "#dcfce7" : "#fee2e2", color: r.is_correct ? "#16a34a" : "#dc2626" }}>{r.is_correct ? "✓" : "✗"}</div>
               </div>
-            </div>
-            <div
-              style={{
-                ...styles.resultBadge,
-                background: result.is_correct ? "#dcfce7" : "#fee2e2",
-                color: result.is_correct ? "#16a34a" : "#dc2626",
-                flexShrink: 0,
-              }}
-            >
-              {result.is_correct ? "✓" : "✗"}
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      <div style={styles.resultsButtons}>
-        <button
-          style={{ ...styles.retryBtn, background: "linear-gradient(135deg, #7c3aed, #8b5cf6)" }}
-          onClick={onRetry}
-        >
-          🔄 Retry This Level
-        </button>
-        <button style={styles.homeBtn} onClick={onHome}>
-          🏠 Back to Home
-        </button>
+        </div>
+        <div className="screen-nav">
+          <button onClick={onRetry}><i className="fa-solid fa-rotate-right" /> RETRY</button>
+          <button className="primary" onClick={onHome}><i className="fa-solid fa-house" /> HOME</button>
+        </div>
       </div>
     </div>
   );

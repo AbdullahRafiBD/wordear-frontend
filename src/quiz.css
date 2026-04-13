@@ -1,0 +1,350 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Quiz Screen  —  mirrors "Quiz html/assets/css/style.css" from the design file
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --q-primary:   rgb(254, 98, 73);
+  --q-secondary: rgb(255, 231, 229);
+  --q-grey:      rgb(176, 176, 176);
+}
+
+/* ── full-screen root ──────────────────────────────────────────────────────── */
+.quiz-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-image: url('/quiz-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  font-family: 'Jost', 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── header ────────────────────────────────────────────────────────────────── */
+.quiz-header {
+  position: relative;
+  padding-top: 200px;          /* matches original main { padding-top: 200px } */
+  flex-shrink: 0;
+}
+
+/* grey progress track — sits behind the circles */
+.quiz-track {
+  background-color: var(--q-grey);
+  height: 59px;
+  width: calc(100% - 120px);
+  margin: 0 auto;
+  position: relative;
+  top: 49px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.quiz-track-fill {
+  height: 100%;
+  background-color: var(--q-primary);
+  border-radius: inherit;
+  transition: width 0.5s ease;
+}
+
+/* row of step dots + timer */
+.quiz-steprow {
+  display: flex;
+  flex-direction: row;
+  width: calc(100% - 60px);
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  top: -20px;               /* same as .stepnumber { top: -20px } */
+  justify-content: space-evenly;
+  align-items: flex-end;
+}
+
+/* numbered circle dots */
+.quiz-dot {
+  border-radius: 50%;
+  background-color: var(--q-grey);
+  width: 55px;
+  height: 55px;
+  display: grid;
+  place-content: center;
+  font-size: 28px;
+  color: #fff;
+  font-weight: bold;
+  transition: 0.5s;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.quiz-dot::before {
+  content: "";
+  background-color: var(--q-primary);
+  transition: 0.5s;
+  height: 100%;
+  width: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.quiz-dot-num {
+  position: relative;
+  z-index: 10;
+}
+.quiz-dot.active::before {
+  width: 100%;
+}
+
+/* centre timer circle */
+.quiz-timer {
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0px 0px 27.52px 4.48px rgba(161, 161, 161, 0.22);
+  width: 130px;
+  height: 130px;
+  position: relative;
+  top: -40px;
+  display: grid;
+  place-content: center;
+  border: solid 10px var(--q-primary);
+  flex-shrink: 0;
+}
+.quiz-timer span {
+  font-size: 40px;
+  color: var(--q-primary);
+  font-weight: bold;
+}
+
+/* ── content card ──────────────────────────────────────────────────────────── */
+.quiz-card {
+  flex: 1;
+  background-color: var(--q-secondary);
+  border-top-right-radius: 50px;
+  border-top-left-radius: 50px;
+  z-index: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 30px 0 0;
+}
+
+/* ── meta row (back btn + score) ───────────────────────────────────────────── */
+.quiz-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10% 16px;
+}
+.quiz-back-btn {
+  background: rgba(0,0,0,0.08);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #555;
+  cursor: pointer;
+  font-family: inherit;
+}
+.quiz-score {
+  font-size: 16px;
+  font-weight: 700;
+  color: #7c7878;
+}
+
+/* ── question text ─────────────────────────────────────────────────────────── */
+.quiz-question {
+  font-size: 50px;
+  color: #000;
+  font-weight: bold;
+  width: 80%;
+  margin: 30px auto 30px;
+  line-height: 1.2;
+}
+
+/* ── fieldset — wraps the answer "option" boxes ────────────────────────────── */
+.quiz-fieldset {
+  flex: 1;
+  width: 80%;
+  margin: 0 auto;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── option box (radio-field style) ────────────────────────────────────────── */
+.quiz-option {
+  width: 100%;
+  height: 90px;
+  padding-left: 40px;
+  display: grid;
+  align-content: center;
+  position: relative;
+  background: #fff;
+  border: 2px solid rgb(180,180,180);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.3s, border-width 0.2s;
+  box-sizing: border-box;
+  gap: 0;
+}
+.quiz-option.correct {
+  border-color: var(--q-primary);
+  border-width: 6px;
+}
+.quiz-option.wrong {
+  border-color: #ef4444;
+  border-width: 6px;
+}
+.quiz-option.audio-btn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-left: 40px;
+}
+.quiz-option.audio-btn:hover,
+.quiz-option.audio-btn.playing {
+  border-color: var(--q-primary);
+}
+.quiz-option-icon {
+  font-size: 24px;
+  color: rgb(180,180,180);
+  transition: color 0.3s;
+  flex-shrink: 0;
+}
+.quiz-option.playing .quiz-option-icon {
+  color: var(--q-primary);
+}
+.quiz-option-label {
+  font-size: 28px;
+  color: rgb(180,180,180);
+  font-weight: 500;
+  position: relative;
+  z-index: 10;
+  transition: color 0.3s;
+}
+.quiz-option.correct .quiz-option-label {
+  color: var(--q-primary);
+}
+.quiz-option.wrong .quiz-option-label {
+  color: #ef4444;
+}
+
+/* text input inside the option box */
+.quiz-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 28px;
+  font-weight: 500;
+  color: rgb(180,180,180);
+  width: 100%;
+  font-family: inherit;
+  letter-spacing: 1px;
+}
+.quiz-input.correct { color: var(--q-primary); }
+.quiz-input.wrong   { color: #ef4444; }
+.quiz-input::placeholder { color: rgb(180,180,180); }
+
+/* ── feedback strip ─────────────────────────────────────────────────────────── */
+.quiz-feedback {
+  width: 80%;
+  margin: 10px auto 0;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+.quiz-feedback.ok  { background: #f0fdf4; border: 2px solid #bbf7d0; }
+.quiz-feedback.bad { background: #fff5f5; border: 2px solid #fecaca; }
+
+/* ── next / prev button row ─────────────────────────────────────────────────── */
+.quiz-nav {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+.quiz-nav button {
+  flex: 1;
+  min-width: 50%;
+  background-color: #fff;
+  height: 80px;
+  border: 0;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: rgb(124, 120, 120);
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.quiz-nav .next-btn {
+  background-color: var(--q-primary);
+  color: #fff;
+}
+
+/* ── bounce animations (from animation.css) ─────────────────────────────────── */
+.bounce-in {
+  animation: bounceIn 0.6s forwards linear;
+  opacity: 0;
+}
+.bounce-in.delay-100 { animation-delay: 100ms; }
+.bounce-in.delay-200 { animation-delay: 200ms; }
+
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: translateX(-30px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* ── responsive ─────────────────────────────────────────────────────────────── */
+
+/* Desktops/Laptops */
+@media (max-width: 1200px) {
+  .quiz-question { font-size: 40px; }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .quiz-header { padding-top: 100px; }
+  .quiz-question {
+    font-size: 35px;
+    padding: 0;
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .quiz-header { padding-top: 20px; }
+  .quiz-track { width: calc(100% - 30px); }
+  .quiz-steprow { width: calc(100% - 20px); }
+
+  /* hide the number dots on mobile, show only timer — matches .number-single { display:none } */
+  .quiz-dot { display: none; }
+
+  .quiz-question {
+    font-size: 20px;
+    width: 95%;
+  }
+  .quiz-fieldset { width: 95%; }
+  .quiz-meta-row { padding: 0 4% 12px; }
+  .quiz-option { height: 70px; }
+  .quiz-option-label,
+  .quiz-input { font-size: 20px; }
+  .quiz-nav button {
+    height: 64px;
+    font-size: 14px;
+    min-width: 100%;   /* stack vertically on very small screens */
+  }
+}
