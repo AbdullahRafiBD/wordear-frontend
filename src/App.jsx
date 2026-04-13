@@ -23,20 +23,25 @@ const SCREENS = {
 function getBestVoice() {
   const voices = window.speechSynthesis.getVoices();
   if (!voices.length) return null;
-  // 1. Microsoft Natural (Edge)
+  // 1. Google UK English Female (preferred)
+  const ukFemale = voices.find(
+    (v) => v.name === "Google UK English Female"
+  );
+  if (ukFemale) return ukFemale;
+  // 2. Any en-GB voice
+  const enGB = voices.find((v) => v.lang === "en-GB");
+  if (enGB) return enGB;
+  // 3. Microsoft Natural (Edge)
   const natural = voices.find(
     (v) => /natural/i.test(v.name) && v.lang.startsWith("en")
   );
   if (natural) return natural;
-  // 2. Google voices (Chrome)
+  // 4. Any Google English voice
   const google = voices.find(
     (v) => /google/i.test(v.name) && v.lang.startsWith("en")
   );
   if (google) return google;
-  // 3. Any en-US voice
-  const enUS = voices.find((v) => v.lang === "en-US");
-  if (enUS) return enUS;
-  // 4. Any English voice
+  // 5. Any English voice
   return voices.find((v) => v.lang.startsWith("en")) || voices[0];
 }
 
