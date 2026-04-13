@@ -310,6 +310,22 @@
 
 /* ── responsive ─────────────────────────────────────────────────────────────── */
 
+/* Desktop: centre a 480px column, background still fills the viewport */
+@media (min-width: 769px) {
+  .quiz-root {
+    align-items: center;
+  }
+  .quiz-header {
+    width: 100%;
+    max-width: 480px;
+  }
+  .quiz-card {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 50px 50px 0 0;
+  }
+}
+
 /* Desktops/Laptops */
 @media (max-width: 1200px) {
   .quiz-question { font-size: 40px; }

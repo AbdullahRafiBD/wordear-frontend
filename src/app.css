@@ -762,6 +762,25 @@ body {
 /* ═══════════════════════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Desktop: centre a 480px column, background still fills the viewport */
+@media (min-width: 769px) {
+  .app-screen {
+    align-items: center;
+  }
+  .screen-head {
+    width: 100%;
+    max-width: 480px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  .screen-card {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 50px 50px 0 0;
+  }
+}
+
 @media (max-width: 768px) {
   .screen-head { padding-top: clamp(20px, 5vw, 80px); }
   .features-grid { grid-template-columns: 1fr 1fr; }
