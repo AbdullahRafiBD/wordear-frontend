@@ -558,7 +558,7 @@ function QuizScreen({ category, onComplete, onBack }) {
             <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"}`} />
           </button>
 
-          {/* text input option box */}
+          {/* text input option box with inline arrow submit */}
           <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
             <input
               ref={inputRef}
@@ -571,6 +571,11 @@ function QuizScreen({ category, onComplete, onBack }) {
               autoComplete="off"
               spellCheck={false}
             />
+            {!feedback && (
+              <button className="quiz-input-arrow" onClick={handleSubmit} tabIndex={-1} aria-label="Check answer">
+                <i className="fa-solid fa-arrow-right" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -597,7 +602,7 @@ function QuizScreen({ category, onComplete, onBack }) {
             </button>
           )}
           {!feedback ? (
-            <button className="next-btn" onClick={handleSubmit}>
+            <button className="next-btn quiz-nav-check" onClick={handleSubmit}>
               CHECK ANSWER <i className="fa-solid fa-arrow-right" />
             </button>
           ) : (
@@ -1229,6 +1234,11 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
             <input ref={inputRef} className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
               value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown}
               placeholder="Type what you heard…" readOnly={!!feedback} autoComplete="off" spellCheck={false} />
+            {!feedback && (
+              <button className="quiz-input-arrow" onClick={handleSubmit} tabIndex={-1} aria-label="Check answer">
+                <i className="fa-solid fa-arrow-right" />
+              </button>
+            )}
           </div>
         </div>
         {feedback === "correct" && <div className="quiz-feedback ok">✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp; <span style={{ color: "var(--primary)", fontWeight: 900 }}>"{current.content}"</span></div>}
@@ -1236,7 +1246,7 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
         <div className="quiz-nav">
           {results.length > 0 && <button onClick={() => onComplete([...results])}>← FINISH EARLY</button>}
           {!feedback
-            ? <button className="next-btn" onClick={handleSubmit}>CHECK ANSWER <i className="fa-solid fa-arrow-right" /></button>
+            ? <button className="next-btn quiz-nav-check" onClick={handleSubmit}>CHECK ANSWER <i className="fa-solid fa-arrow-right" /></button>
             : <button className="next-btn" onClick={handleNext}>{index+1 >= words.length ? "SEE RESULTS 🏆" : <>NEXT WORD <i className="fa-solid fa-arrow-right" /></>}</button>
           }
         </div>

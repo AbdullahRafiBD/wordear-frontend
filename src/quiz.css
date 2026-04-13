@@ -272,6 +272,25 @@
   color: #ef4444;
 }
 
+/* arrow submit button inside the input box */
+.quiz-input-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--q-primary);
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.quiz-input-arrow:hover { opacity: 0.85; transform: scale(1.08); }
+
 /* text input inside the option box */
 .quiz-input {
   border: none;
@@ -376,6 +395,8 @@
 
 /* Mobile */
 @media (max-width: 576px) {
+  /* arrow in the input box handles submit — hide the nav CHECK ANSWER button */
+  .quiz-nav-check { display: none; }
   .quiz-header { padding-top: 20px; }
   .quiz-track { width: calc(100% - 30px); }
   .quiz-steprow { width: calc(100% - 20px); }
