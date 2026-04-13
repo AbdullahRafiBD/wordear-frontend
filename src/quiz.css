@@ -138,7 +138,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 10% 16px;
+  padding: 24px 10% 16px;
 }
 .quiz-back-btn {
   background: rgba(0,0,0,0.08);
@@ -309,6 +309,9 @@
   display: flex;
   flex-wrap: wrap;
   margin-top: 20px;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
 }
 .quiz-nav button {
   flex: 1;
@@ -385,7 +388,7 @@
     width: 95%;
   }
   .quiz-fieldset { width: 95%; }
-  .quiz-meta-row { padding: 0 4% 12px; }
+  .quiz-meta-row { padding: 12px 4% 12px; }
   .quiz-option { height: 70px; }
   .quiz-option-label,
   .quiz-input { font-size: 20px; }
