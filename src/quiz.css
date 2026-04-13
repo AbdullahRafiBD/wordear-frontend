@@ -21,7 +21,9 @@
   font-family: 'Jost', 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ── header ────────────────────────────────────────────────────────────────── */
@@ -118,16 +120,17 @@
 
 /* ── content card ──────────────────────────────────────────────────────────── */
 .quiz-card {
-  flex: 1;
+  width: 100%;
   background-color: var(--q-secondary);
-  border-top-right-radius: 50px;
-  border-top-left-radius: 50px;
+  border-top-right-radius: 40px;
+  border-top-left-radius: 40px;
   z-index: 1;
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  padding: 30px 0 0;
+  padding: 0;
+  min-height: 100vh;
+  flex-shrink: 0;
 }
 
 /* ── meta row (back btn + score) ───────────────────────────────────────────── */
@@ -271,7 +274,7 @@
 .quiz-nav {
   display: flex;
   flex-wrap: wrap;
-  margin-top: auto;
+  margin-top: 20px;
 }
 .quiz-nav button {
   flex: 1;
@@ -310,21 +313,13 @@
 
 /* ── responsive ─────────────────────────────────────────────────────────────── */
 
-/* Desktop: centred 480px column */
+/* Desktop: 70% width column */
 @media (min-width: 769px) {
-  .quiz-root {
-    align-items: center;
-    justify-content: flex-end;
-  }
-  .quiz-header {
-    width: 100%;
-    max-width: 480px;
-  }
   .quiz-card {
-    width: 100%;
-    max-width: 480px;
-    border-radius: 50px 50px 0 0;
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+    width: 70%;
+    border-radius: 0;
+    box-shadow: 0 0 60px rgba(0,0,0,0.15);
+    min-height: 100vh;
   }
 }
 

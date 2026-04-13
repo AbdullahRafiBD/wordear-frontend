@@ -532,26 +532,6 @@ function QuizScreen({ category, onComplete, onBack }) {
 
   return (
     <div className="quiz-root">
-
-      {/* ══════════ HEADER ══════════ */}
-      <div className="quiz-header">
-
-        {/* grey track + orange fill */}
-        <div className="quiz-track">
-          <div className="quiz-track-fill" style={{ width: `${barPct}%` }} />
-        </div>
-
-        {/* step dots */}
-        <div className="quiz-steprow">
-          {stepDots.map((active, i) => (
-            <div key={i} className={`quiz-dot${active ? " active" : ""}`}>
-              <span className="quiz-dot-num">{i + 1}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ══════════ CONTENT CARD ══════════ */}
       <div className="quiz-card">
 
         {/* back + score */}
@@ -1238,12 +1218,6 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
 
   return (
     <div className="quiz-root">
-      <div className="quiz-header">
-        <div className="quiz-track"><div className="quiz-track-fill" style={{ width: `${progressPct}%` }} /></div>
-        <div className="quiz-steprow" style={{ justifyContent: "center" }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", background: "rgba(0,0,0,0.25)", borderRadius: 20, padding: "4px 16px" }}>{index+1} / {words.length}</span>
-        </div>
-      </div>
       <div className="quiz-card">
         <div className="quiz-meta-row">
           <button className="quiz-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
@@ -1556,14 +1530,6 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
 
   return (
     <div className="quiz-root">
-      <div className="quiz-header">
-        <div className="quiz-track"><div className="quiz-track-fill" style={{ width: `${barPct}%` }} /></div>
-        <div className="quiz-steprow">
-          {stepDots.map((active, i) => (
-            <div key={i} className={`quiz-dot${active ? " active" : ""}`}><span className="quiz-dot-num">{i+1}</span></div>
-          ))}
-        </div>
-      </div>
       <div className="quiz-card">
         <div className="quiz-meta-row">
           <button className="quiz-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
