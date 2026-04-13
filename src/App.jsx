@@ -558,21 +558,23 @@ function QuizScreen({ category, onComplete, onBack }) {
             <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"}`} />
           </button>
 
-          {/* text input option box with inline arrow submit */}
-          <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
-            <input
-              ref={inputRef}
-              className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type the word you heard…"
-              readOnly={!!feedback}
-              autoComplete="off"
-              spellCheck={false}
-            />
+          {/* text input + arrow button side by side */}
+          <div className="quiz-input-row">
+            <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
+              <input
+                ref={inputRef}
+                className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type the word you heard…"
+                readOnly={!!feedback}
+                autoComplete="off"
+                spellCheck={false}
+              />
+            </div>
             {!feedback && (
-              <button className="quiz-input-arrow" onClick={handleSubmit} tabIndex={-1} aria-label="Check answer">
+              <button className="quiz-input-arrow" onClick={handleSubmit} aria-label="Check answer">
                 <i className="fa-solid fa-arrow-right" />
               </button>
             )}
@@ -1230,12 +1232,14 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
           <button className={`round-play-btn${isPlaying ? " playing" : ""}`} onClick={playAudio} aria-label="Play word">
             <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"}`} />
           </button>
-          <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
-            <input ref={inputRef} className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
-              value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown}
-              placeholder="Type what you heard…" readOnly={!!feedback} autoComplete="off" spellCheck={false} />
+          <div className="quiz-input-row">
+            <div className={`quiz-option${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}>
+              <input ref={inputRef} className={`quiz-input${feedback === "correct" ? " correct" : feedback === "wrong" ? " wrong" : ""}`}
+                value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown}
+                placeholder="Type what you heard…" readOnly={!!feedback} autoComplete="off" spellCheck={false} />
+            </div>
             {!feedback && (
-              <button className="quiz-input-arrow" onClick={handleSubmit} tabIndex={-1} aria-label="Check answer">
+              <button className="quiz-input-arrow" onClick={handleSubmit} aria-label="Check answer">
                 <i className="fa-solid fa-arrow-right" />
               </button>
             )}

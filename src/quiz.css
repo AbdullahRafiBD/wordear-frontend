@@ -272,24 +272,33 @@
   color: #ef4444;
 }
 
-/* arrow submit button inside the input box */
+/* row that holds the input box + arrow button side by side */
+.quiz-input-row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.quiz-input-row .quiz-option {
+  flex: 1;
+  margin-bottom: 0;   /* row handles spacing */
+}
+
+/* arrow button — sits to the right of the input, same height */
 .quiz-input-arrow {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: clamp(48px, 12vw, 64px);
+  flex-shrink: 0;
   background: var(--q-primary);
   border: none;
   color: #fff;
-  font-size: 15px;
+  font-size: clamp(16px, 4vw, 20px);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  margin-right: 10px;
-  transition: opacity 0.15s, transform 0.15s;
+  transition: opacity 0.15s;
 }
-.quiz-input-arrow:hover { opacity: 0.85; transform: scale(1.08); }
+.quiz-input-arrow:hover { opacity: 0.85; }
 
 /* text input inside the option box */
 .quiz-input {
