@@ -1852,17 +1852,30 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
     setTranscript("");
 
     const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
+    recognition.lang = "en-GB";
+    recognition.interimResults = true;
     recognition.maxAlternatives = 1;
     recognitionRef.current = recognition;
 
     recognition.onstart = () => setIsListening(true);
 
     recognition.onresult = (event) => {
-      const result = event.results[0][0].transcript;
-      setTranscript(result);
-      submitAnswer(result);
+      let interimTranscript = "";
+      let finalTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += t;
+        } else {
+          interimTranscript += t;
+        }
+      }
+      if (finalTranscript) {
+        setTranscript(finalTranscript);
+        submitAnswer(finalTranscript);
+      } else {
+        setTranscript(interimTranscript);
+      }
     };
 
     recognition.onerror = (event) => {
@@ -1879,6 +1892,12 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
     recognition.onend = () => setIsListening(false);
 
     recognition.start();
+  };
+
+  const handleTryAgain = () => {
+    setTranscript("");
+    setFeedback(null);
+    setMicError(null);
   };
 
   const submitAnswer = (spokenText) => {
@@ -1979,7 +1998,10 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
         <div style={{ marginBottom: 16 }}>
           <div style={styles.voiceInputArea}>
             {transcript ? (
-              <div style={styles.transcriptText}>"{transcript}"</div>
+              <div style={{ ...styles.transcriptText, color: isListening ? "#7c3aed" : undefined }}>
+                "{transcript}"
+                {isListening && <span style={{ marginLeft: 6, opacity: 0.6, fontSize: 12 }}>...</span>}
+              </div>
             ) : (
               <div style={styles.transcriptPlaceholder}>
                 {isListening ? "Listening... speak now" : "Your spoken answer will appear here"}
@@ -2016,6 +2038,9 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
           <button style={styles.nextBtn} onClick={handleNext}>
             {index + 1 >= sentences.length ? "See Results 🏆" : "Next Sentence →"}
           </button>
+          <button style={styles.tryAgainBtn} onClick={handleTryAgain}>
+            Try Again
+          </button>
         </div>
       )}
 
@@ -2029,6 +2054,9 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
           <div style={styles.feedbackYours}>You said: <em>"{transcript}"</em></div>
           <button style={styles.nextBtnOrange} onClick={handleNext}>
             {index + 1 >= sentences.length ? "See Results 🏆" : "Next Sentence →"}
+          </button>
+          <button style={styles.tryAgainBtn} onClick={handleTryAgain}>
+            Try Again Same Sentence
           </button>
         </div>
       )}
@@ -2528,6 +2556,18 @@ const styles = {
     fontSize: 15,
     fontWeight: 700,
     cursor: "pointer",
+  },
+  tryAgainBtn: {
+    marginTop: 10,
+    background: "transparent",
+    color: "#7c3aed",
+    border: "2px solid #7c3aed",
+    borderRadius: 12,
+    padding: "10px 24px",
+    fontSize: 14,
+    fontWeight: 700,
+    cursor: "pointer",
+    width: "100%",
   },
   profileCard: {
     background: CARD,
