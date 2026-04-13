@@ -1801,8 +1801,7 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
     const fetchSentences = async () => {
       try {
         const response = await shadowingAPI.getSentences(level.id);
-        const shuffled = shuffleArray(response.data.sentences);
-        setSentences(shuffled);
+        setSentences(response.data.sentences);
       } catch (error) {
         console.error("Failed to fetch sentences:", error);
         alert("Failed to load sentences");
