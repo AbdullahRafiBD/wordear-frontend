@@ -357,19 +357,19 @@ function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile, o
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <div className="home-user-row">
-          <div>
-            <p className="home-greet">Welcome back 👋</p>
-            <h2 className="home-username">{user?.name}</h2>
-          </div>
-          <button className="home-avatar" onClick={onProfile}>
-            {user?.name?.[0]?.toUpperCase()}
-          </button>
-        </div>
-      </div>
-
       <div className="screen-card">
+        <div className="card-head">
+          <div className="home-user-row">
+            <div>
+              <p className="home-greet">Welcome back 👋</p>
+              <h2 className="home-username">{user?.name}</h2>
+            </div>
+            <button className="home-avatar" onClick={onProfile}>
+              {user?.name?.[0]?.toUpperCase()}
+            </button>
+          </div>
+        </div>
+
         <div className="screen-body">
           <h3 className="section-title">Choose a Mode</h3>
           <div className="features-grid">
@@ -389,12 +389,6 @@ function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile, o
             ))}
           </div>
         </div>
-
-        <div className="screen-nav">
-          <button className="primary" onClick={onLogout}>
-            <i className="fa-solid fa-right-from-bracket" /> Logout
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -410,18 +404,18 @@ function CategoryScreen({ onSelect, onBack }) {
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <div className="screen-head-row">
-          <button className="head-back-btn" onClick={onBack}>
-            <i className="fa-solid fa-arrow-left" /> Back
-          </button>
-          <span className="score-badge">Pick a Category</span>
-        </div>
-        <h1 className="screen-head-title">Select a Letter</h1>
-        <p className="screen-head-sub">Tap a letter to start spelling words from that category</p>
-      </div>
-
       <div className="screen-card">
+        <div className="card-head">
+          <div className="card-head-row">
+            <button className="back-btn" onClick={onBack}>
+              <i className="fa-solid fa-arrow-left" /> Back
+            </button>
+            <span className="card-badge">Pick a Category</span>
+          </div>
+          <h1 className="card-head-title">Select a Letter</h1>
+          <p className="card-head-sub">Tap a letter to start spelling words from that category</p>
+        </div>
+
         <div className="screen-body">
           <div className="kbd-wrap">
             {rows.map((row, ri) => (
@@ -667,12 +661,12 @@ function ResultsScreen({ results, category, onHome, onRetry }) {
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <h1 className="screen-head-title">Quiz Results 🎉</h1>
-        <p className="screen-head-sub">Category: <strong style={{ color: "#fff" }}>{category}</strong></p>
-      </div>
-
       <div className="screen-card">
+        <div className="card-head">
+          <h1 className="card-head-title">Quiz Results 🎉</h1>
+          <p className="card-head-sub">Category: <strong style={{ color: "var(--primary)" }}>{category}</strong></p>
+        </div>
+
         <div className="screen-body">
           {/* Stats */}
           <div className="results-summary">
@@ -814,14 +808,14 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <div className="screen-head-row">
-          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
-        </div>
-        <h1 className="screen-head-title">My Profile</h1>
-      </div>
-
       <div className="screen-card">
+        <div className="card-head">
+          <div className="card-head-row">
+            <button className="back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+            <h2 style={{ fontSize: "clamp(18px,4vw,24px)", fontWeight: 900, color: "var(--dark)", margin: 0 }}>My Profile</h2>
+          </div>
+        </div>
+
         <div className="screen-body">
           {/* Profile info */}
           <div className="profile-info-box">
@@ -1010,13 +1004,13 @@ function MyGroupsScreen({ user, onOpenGroup, onBack }) {
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <div className="screen-head-row">
-          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
-        </div>
-        <h1 className="screen-head-title">My Groups</h1>
-      </div>
       <div className="screen-card">
+        <div className="card-head">
+          <div className="card-head-row">
+            <button className="back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+            <h2 style={{ fontSize: "clamp(18px,4vw,22px)", fontWeight: 900, color: "var(--dark)", margin: 0 }}>My Groups</h2>
+          </div>
+        </div>
         <div className="screen-body">
           {blocked ? (
             <div className="locked-banner">🔒 An admin has restricted your ability to create groups.</div>
@@ -1119,15 +1113,15 @@ function GroupDetailScreen({ group, onStartQuiz, onBack, onGroupUpdated }) {
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <div className="screen-head-row">
-          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
-          <span className="score-badge">{items.length} items</span>
-        </div>
-        <h1 className="screen-head-title" style={{ fontSize: "clamp(20px,5vw,36px)" }}>{group.name}</h1>
-        {group.description && <p className="screen-head-sub">{group.description}</p>}
-      </div>
       <div className="screen-card">
+        <div className="card-head">
+          <div className="card-head-row">
+            <button className="back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+            <span className="card-badge">{items.length} items</span>
+          </div>
+          <h1 className="card-head-title">{group.name}</h1>
+          {group.description && <p className="card-head-sub">{group.description}</p>}
+        </div>
         <div className="screen-body">
           {blocked && <div className="locked-banner">🔒 Adding items is locked by admin.</div>}
           {!blocked && (showForm ? (
@@ -1304,11 +1298,11 @@ function GroupResultsScreen({ results, group, onHome, onRetry, onBack }) {
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <h1 className="screen-head-title">Quiz Results 🎉</h1>
-        <p className="screen-head-sub">Group: <strong style={{ color: "#fff" }}>{group?.name}</strong></p>
-      </div>
       <div className="screen-card">
+        <div className="card-head">
+          <h1 className="card-head-title">Quiz Results 🎉</h1>
+          <p className="card-head-sub">Group: <strong style={{ color: "var(--primary)" }}>{group?.name}</strong></p>
+        </div>
         <div className="screen-body">
           <div className="results-summary">
             <div className="stats-row">
@@ -1371,14 +1365,14 @@ function ShadowingLevelScreen({ onSelect, onBack }) {
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <div className="screen-head-row">
-          <button className="head-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
-        </div>
-        <h1 className="screen-head-title">Shadowing Practice</h1>
-        <p className="screen-head-sub">🗣️ Listen to sentences and repeat them aloud</p>
-      </div>
       <div className="screen-card">
+        <div className="card-head">
+          <div className="card-head-row">
+            <button className="back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
+          </div>
+          <h1 className="card-head-title">Shadowing Practice</h1>
+          <p className="card-head-sub">🗣️ Listen to sentences and repeat them aloud</p>
+        </div>
         <div className="screen-body">
           <h3 className="section-title">Select a Level</h3>
           {loading ? <p className="empty-msg">Loading levels…</p>
@@ -1655,11 +1649,11 @@ function ShadowingResultsScreen({ results, level, onHome, onRetry }) {
 
   return (
     <div className="app-screen">
-      <div className="screen-head">
-        <h1 className="screen-head-title">Shadowing Results 🎉</h1>
-        <p className="screen-head-sub">Level: <strong style={{ color: "#fff" }}>{level?.name}</strong></p>
-      </div>
       <div className="screen-card">
+        <div className="card-head">
+          <h1 className="card-head-title">Shadowing Results 🎉</h1>
+          <p className="card-head-sub">Level: <strong style={{ color: "var(--primary)" }}>{level?.name}</strong></p>
+        </div>
         <div className="screen-body">
           <div className="results-summary">
             <div className="stats-row">

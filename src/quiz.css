@@ -310,10 +310,11 @@
 
 /* ── responsive ─────────────────────────────────────────────────────────────── */
 
-/* Desktop: centre a 480px column, background still fills the viewport */
+/* Desktop: centred 480px column */
 @media (min-width: 769px) {
   .quiz-root {
     align-items: center;
+    justify-content: flex-end;
   }
   .quiz-header {
     width: 100%;
@@ -323,6 +324,7 @@
     width: 100%;
     max-width: 480px;
     border-radius: 50px 50px 0 0;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
   }
 }
 
