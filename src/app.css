@@ -794,3 +794,30 @@ body {
   .stat-box { min-width: 45%; }
   .screen-nav button, .nav-btn { min-width: 100%; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BACKGROUND AD PANELS  (desktop only, left/right of the 70% card)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.bg-ad {
+  display: none; /* hidden on mobile */
+}
+
+@media (min-width: 769px) {
+  .bg-ad {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    width: 15%;
+    height: 100%;
+    z-index: 50; /* below screen-card (z-index: 100) */
+    overflow: hidden;
+  }
+  .bg-ad-left  { left: 0; }
+  .bg-ad-right { right: 0; }
+  .bg-ad ins {
+    display: block;
+    width: 100%;
+  }
+}

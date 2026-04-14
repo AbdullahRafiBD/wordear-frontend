@@ -86,6 +86,30 @@ function shuffleArray(array) {
   return shuffled;
 }
 
+// ─── AdUnit Component ─────────────────────────────────────────────────────────
+function AdUnit({ slot, style = {} }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      // AdSense not loaded yet
+    }
+  }, []);
+
+  return (
+    <ins
+      ref={ref}
+      className="adsbygoogle"
+      style={{ display: "block", ...style }}
+      data-ad-client="ca-pub-2749327485848465"
+      data-ad-slot={slot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+  );
+}
+
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [screen, setScreen] = useState(SCREENS.LOGIN);
@@ -290,6 +314,14 @@ export default function App() {
           onRetry={() => setScreen(SCREENS.SHADOWING_QUIZ)}
         />
       )}
+
+      {/* Background ad panels — desktop only, shown in the 15% strips left/right of the card */}
+      <div className="bg-ad bg-ad-left">
+        <AdUnit slot="9729254192" />
+      </div>
+      <div className="bg-ad bg-ad-right">
+        <AdUnit slot="8006155169" />
+      </div>
     </div>
   );
 }
