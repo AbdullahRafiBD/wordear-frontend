@@ -248,7 +248,7 @@ export default function App() {
       {screen === SCREENS.GROUP_DETAIL && (
         <GroupDetailScreen
           group={selectedGroup}
-          onStartQuiz={(words) => { setGroupQuizResults(null); setScreen(SCREENS.GROUP_QUIZ); }}
+          onStartQuiz={() => { setGroupQuizResults(null); setScreen(SCREENS.GROUP_QUIZ); }}
           onBack={() => setScreen(SCREENS.MY_GROUPS)}
           onGroupUpdated={(g) => setSelectedGroup(g)}
         />
@@ -327,7 +327,7 @@ function LoginScreen({ onSuccess }) {
 }
 
 // ─── Home Screen ──────────────────────────────────────────────────────────────
-function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile, onLogout }) {
+function HomeScreen({ user, onSelectFeature, onShadowing, onGroups, onProfile }) {
   const isBlocked = user?.is_blocked_groups;
   const features = [
     {
@@ -445,7 +445,7 @@ function QuizScreen({ category, onComplete, onBack }) {
   const [score, setScore]       = useState(0);
   const [attempts, setAttempts] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(60); // used by countdown effect
   const inputRef = useRef(null);
 
   /* fetch words */
@@ -523,12 +523,6 @@ function QuizScreen({ category, onComplete, onBack }) {
   );
 
   /* step progress dots (4 checkpoints across word list) */
-  const STEP_COUNT = 4;
-  const stepDots = Array.from({ length: STEP_COUNT }, (_, i) =>
-    index >= Math.floor((i / STEP_COUNT) * words.length)
-  );
-  const barPct = (stepDots.filter(Boolean).length / STEP_COUNT) * 100;
-
   return (
     <div className="quiz-root">
       <div className="quiz-card">
@@ -922,7 +916,7 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
 }
 
 // ─── My Groups Screen ─────────────────────────────────────────────────────────
-function MyGroupsScreen({ user, onOpenGroup, onBack }) {
+function MyGroupsScreen({ onOpenGroup, onBack }) {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [blocked, setBlocked] = useState(false);
@@ -1189,8 +1183,6 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
     );
   }
 
-  const progressPct = Math.round((index / words.length) * 100);
-
   const handleSubmit = () => {
     if (!input.trim()) return;
     const isCorrect = input.trim().toLowerCase() === current.content.toLowerCase();
@@ -1244,8 +1236,19 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
               </button>
             )}
           </div>
-          {feedback === "correct" && <div className="quiz-feedback ok">✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp; <span style={{ color: "var(--primary)", fontWeight: 900 }}>"{current.content}"</span></div>}
-          {feedback === "wrong" && <div className="quiz-feedback bad">❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct: <strong style={{ color: "var(--primary)" }}>{current.content}</strong>&nbsp;— You wrote: <em>{input}</em></div>}
+          {feedback === "correct" && (
+            <div className="quiz-feedback ok">
+              ✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp;
+              <span style={{ color: "var(--primary)", fontWeight: 900 }}>"{current.content}"</span>
+              {current.description && <span style={{ display: "block", marginTop: 4, fontSize: "0.88em", color: "#166534" }}>📖 {current.description}</span>}
+            </div>
+          )}
+          {feedback === "wrong" && (
+            <div className="quiz-feedback bad">
+              ❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct: <strong style={{ color: "var(--primary)" }}>{current.content}</strong>&nbsp;— You wrote: <em>{input}</em>
+              {current.description && <span style={{ display: "block", marginTop: 4, fontSize: "0.88em", color: "#991b1b" }}>📖 {current.description}</span>}
+            </div>
+          )}
         </div>
         <div className="quiz-nav">
           {results.length > 0 && <button onClick={() => onComplete([...results])}>← FINISH EARLY</button>}
@@ -1329,15 +1332,6 @@ function ShadowingLevelScreen({ onSelect, onBack }) {
     };
     fetchLevels();
   }, [onBack]);
-
-  const levelColors = [
-    { bg: "linear-gradient(135deg, #22c55e, #16a34a)", shadow: "rgba(34,197,94,0.3)" },
-    { bg: "linear-gradient(135deg, #3b82f6, #2563eb)", shadow: "rgba(59,130,246,0.3)" },
-    { bg: "linear-gradient(135deg, #f97316, #ea580c)", shadow: "rgba(249,115,22,0.3)" },
-    { bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)", shadow: "rgba(139,92,246,0.3)" },
-    { bg: "linear-gradient(135deg, #ec4899, #db2777)", shadow: "rgba(236,72,153,0.3)" },
-    { bg: "linear-gradient(135deg, #fe6249, #f97316)", shadow: "rgba(254,98,73,0.3)" },
-  ];
 
   return (
     <div className="app-screen">
@@ -1532,11 +1526,6 @@ function ShadowingQuizScreen({ level, onComplete, onBack }) {
       <button onClick={onBack} style={{ marginTop: 16, padding: "10px 24px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer" }}>Go Back</button>
     </div>
   );
-
-  const progressPct = Math.round(((index + 1) / sentences.length) * 100);
-  const STEP_COUNT = 4;
-  const stepDots = Array.from({ length: STEP_COUNT }, (_, i) => index >= Math.floor((i / STEP_COUNT) * sentences.length));
-  const barPct = (stepDots.filter(Boolean).length / STEP_COUNT) * 100;
 
   return (
     <div className="quiz-root">
