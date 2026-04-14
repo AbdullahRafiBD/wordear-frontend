@@ -1240,13 +1240,13 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
             <div className="quiz-feedback ok">
               ✅ &nbsp;<strong>Correct! +1 pt</strong>&nbsp;
               <span style={{ color: "var(--primary)", fontWeight: 900 }}>"{current.content}"</span>
-              {current.description && <span style={{ display: "block", marginTop: 4, fontSize: "0.88em", color: "#166534" }}>📖 {current.description}</span>}
+              {current.description && <span style={{ width: "100%", marginTop: 4, fontSize: "0.88em", color: "#166534" }}>📖 {current.description}</span>}
             </div>
           )}
           {feedback === "wrong" && (
             <div className="quiz-feedback bad">
               ❌ &nbsp;<strong>Not quite!</strong>&nbsp; Correct: <strong style={{ color: "var(--primary)" }}>{current.content}</strong>&nbsp;— You wrote: <em>{input}</em>
-              {current.description && <span style={{ display: "block", marginTop: 4, fontSize: "0.88em", color: "#991b1b" }}>📖 {current.description}</span>}
+              {current.description && <span style={{ width: "100%", marginTop: 4, fontSize: "0.88em", color: "#991b1b" }}>📖 {current.description}</span>}
             </div>
           )}
         </div>
