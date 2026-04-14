@@ -1219,7 +1219,7 @@ function GroupQuizScreen({ group, onComplete, onBack }) {
           <button className="quiz-back-btn" onClick={onBack}><i className="fa-solid fa-arrow-left" /> Back</button>
           <span className="quiz-score">📁 {group.name} &nbsp;|&nbsp; ⭐ {score} pts</span>
         </div>
-        <h1 className="quiz-question">{current.description || "Listen and type the word"}</h1>
+        <h1 className="quiz-question">Listen and type the word</h1>
         <div className="quiz-fieldset">
           <button className={`round-play-btn${isPlaying ? " playing" : ""}`} onClick={playAudio} aria-label="Play word">
             <i className={`fa-solid ${isPlaying ? "fa-volume-high" : "fa-play"}`} />
