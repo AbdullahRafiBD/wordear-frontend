@@ -79,7 +79,6 @@ export const groupsAPI = {
   updateGroup: (id, data) => api.put(`/groups/${id}`, data),
   deleteGroup: (id) => api.delete(`/groups/${id}`),
   addItem: (groupId, data) => api.post(`/groups/${groupId}/items`, data),
-  updateItem: (groupId, itemId, data) => api.put(`/groups/${groupId}/items/${itemId}`, data),
   deleteItem: (groupId, itemId) => api.delete(`/groups/${groupId}/items/${itemId}`),
 };
 

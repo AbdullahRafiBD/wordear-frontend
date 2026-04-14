@@ -1032,10 +1032,6 @@ function GroupDetailScreen({ group, onStartQuiz, onBack, onGroupUpdated }) {
   const [itemContent, setItemContent] = useState("");
   const [itemDesc, setItemDesc] = useState("");
   const [saving, setSaving] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [editContent, setEditContent] = useState("");
-  const [editDesc, setEditDesc] = useState("");
-  const [editSaving, setEditSaving] = useState(false);
 
   const load = async () => {
     try {
@@ -1078,35 +1074,6 @@ function GroupDetailScreen({ group, onStartQuiz, onBack, onGroupUpdated }) {
     }
   };
 
-  const startEdit = (item) => {
-    setEditingId(item.id);
-    setEditContent(item.content);
-    setEditDesc(item.description || "");
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditContent("");
-    setEditDesc("");
-  };
-
-  const handleEditItem = async (itemId) => {
-    if (!editContent.trim()) return;
-    setEditSaving(true);
-    try {
-      const res = await groupsAPI.updateItem(group.id, itemId, {
-        content: editContent.trim(),
-        description: editDesc.trim() || null,
-      });
-      setItems((prev) => prev.map((i) => i.id === itemId ? res.data : i));
-      cancelEdit();
-    } catch {
-      alert("Failed to update item.");
-    } finally {
-      setEditSaving(false);
-    }
-  };
-
 
   if (loading) return (
     <div className="app-screen" style={{ alignItems: "center", justifyContent: "center" }}>
@@ -1146,52 +1113,17 @@ function GroupDetailScreen({ group, onStartQuiz, onBack, onGroupUpdated }) {
             <p className="empty-msg">📝 No items yet. Add your first word or sentence.</p>
           ) : (
             items.map(item => (
-              editingId === item.id ? (
-                /* ── inline edit form ── */
-                <div key={item.id} className="word-item" style={{ flexDirection: "column", alignItems: "stretch", gap: 8 }}>
-                  <input
-                    className="form-input"
-                    style={{ marginBottom: 0 }}
-                    value={editContent}
-                    onChange={e => setEditContent(e.target.value)}
-                    placeholder="Word or sentence *"
-                    autoFocus
-                  />
-                  <input
-                    className="form-input"
-                    style={{ marginBottom: 0 }}
-                    value={editDesc}
-                    onChange={e => setEditDesc(e.target.value)}
-                    placeholder="Description / hint (optional)"
-                  />
-                  <div style={{ display: "flex", gap: 0 }}>
-                    <button className="nav-btn primary" onClick={() => handleEditItem(item.id)} disabled={editSaving || !editContent.trim()}>
-                      {editSaving ? "Saving…" : "Save"}
-                    </button>
-                    <button className="nav-btn" onClick={cancelEdit}>Cancel</button>
-                  </div>
+              <div key={item.id} className="word-item">
+                <div style={{ flex: 1 }}>
+                  <div className="word-content">{item.content}</div>
+                  {item.description && <div className="word-desc">{item.description}</div>}
                 </div>
-              ) : (
-                /* ── normal view ── */
-                <div key={item.id} className="word-item">
-                  <div style={{ flex: 1 }}>
-                    <div className="word-content">{item.content}</div>
-                    {item.description && <div className="word-desc">{item.description}</div>}
-                  </div>
-                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                    <button className="del-btn" style={{ background: "#eff6ff", border: "1.5px solid #bfdbfe", color: "#2563eb" }} onClick={() => startEdit(item)} title="Edit">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                      </svg>
-                    </button>
-                    <button className="del-btn" onClick={() => handleDeleteItem(item.id)} title="Delete">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              )
+                <button className="del-btn" onClick={() => handleDeleteItem(item.id)} title="Delete">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                </button>
+              </div>
             ))
           )}
         </div>
