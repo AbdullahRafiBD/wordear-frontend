@@ -968,10 +968,6 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
                         )}
                       </div>
 
-                      <div className="history-meta">
-                        {formatDate(a.created_at)} · {isWord ? `Category ${a.category}` : a.level?.name || `Level ${a.level_id}`}
-                      </div>
-
                       <div className="history-detail">
                         <div className="history-answer" style={{ color: isCorrect ? "#22c55e" : "#ef4444" }}>
                           {isWord ? `Your answer: "${a.user_answer}"` : `You said: "${a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"`}
@@ -984,9 +980,6 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div className="history-score" style={{ color: isCorrect ? "#16a34a" : "#dc2626" }}>
-                        Score: {isCorrect ? "1" : "0"}
-                      </div>
                       <div className="result-badge" style={{ background: isCorrect ? "#dcfce7" : "#fee2e2", color: isCorrect ? "#16a34a" : "#dc2626" }}>
                         {isCorrect ? "✓" : "✗"}
                       </div>

@@ -602,19 +602,13 @@ body {
   flex-wrap: wrap;
   margin-bottom: 4px;
 }
-.history-meta {
-  font-size: 12px;
-  color: var(--grey-text);
-  margin-bottom: 6px;
-}
 .history-detail {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 .history-answer,
-.history-correct,
-.history-score {
+.history-correct {
   font-size: 12px;
   line-height: 1.4;
 }
@@ -623,9 +617,6 @@ body {
 }
 .history-correct {
   color: #2563eb;
-}
-.history-score {
-  font-weight: 700;
 }
 .history-word {
   font-size: clamp(14px, 3vw, 16px);
