@@ -800,8 +800,8 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
   });
 
   // Combined history sorted newest first
-  const wordRows = latestWordAttempts.map((a) => ({ ...a, _type: "word" }));
-  const shadowRows = latestShadowingAttempts.map((a) => ({ ...a, _type: "shadowing" }));
+  const wordRows = localAttempts.map((a) => ({ ...a, _type: "word" }));
+  const shadowRows = localShadowingAttempts.map((a) => ({ ...a, _type: "shadowing" }));
   const combinedHistory = [...wordRows, ...shadowRows].sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
   );
