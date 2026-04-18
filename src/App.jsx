@@ -912,6 +912,7 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
                             <span className="history-cat">[{a.category}]</span>
                           </div>
                           {!a.is_correct && <span className="history-wrong">You wrote: "{a.user_answer}"</span>}
+                          {a.is_correct && <span className="history-wrong" style={{ color: "#22c55e" }}>You wrote: "{a.user_answer}"</span>}
                         </>
                       ) : (
                         <>
@@ -923,6 +924,7 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
                             {a.sentence.length > 60 ? a.sentence.slice(0, 60) + "…" : a.sentence}
                           </span>
                           {!a.is_correct && <span className="history-wrong">You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"</span>}
+                          {a.is_correct && <span className="history-wrong" style={{ color: "#22c55e" }}>You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"</span>}
                         </>
                       )}
                     </div>
