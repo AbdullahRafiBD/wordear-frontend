@@ -900,9 +900,10 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
               {combinedHistory.length === 0 && <p className="empty-msg">No attempts yet. Start playing! 🎮</p>}
               {combinedHistory.map((a, i) => {
                 const isWord = a._type === "word";
+                const isCorrect = isWord ? a.user_answer.trim().toLowerCase() === a.word.toLowerCase() : a.is_correct;
                 return (
                   <div key={i} className="history-row">
-                    <div className="history-dot" style={{ background: a.is_correct ? "#22c55e" : "#ef4444" }} />
+                    <div className="history-dot" style={{ background: (isWord ? isCorrect : a.is_correct) ? "#22c55e" : "#ef4444" }} />
                     <div style={{ flex: 1 }}>
                       {isWord ? (
                         <>
@@ -911,8 +912,7 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
                             <span className="history-word">{a.word}</span>
                             <span className="history-cat">[{a.category}]</span>
                           </div>
-                          {!a.is_correct && <span className="history-wrong">You wrote: "{a.user_answer}"</span>}
-                          {a.is_correct && <span className="history-wrong" style={{ color: "#22c55e" }}>You wrote: "{a.user_answer}"</span>}
+                          <span className="history-wrong" style={{ color: isCorrect ? "#22c55e" : "#ef4444" }}>You wrote: "{a.user_answer}"</span>
                         </>
                       ) : (
                         <>
@@ -929,8 +929,8 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
                       )}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div className="result-badge" style={{ background: a.is_correct ? "#dcfce7" : "#fee2e2", color: a.is_correct ? "#16a34a" : "#dc2626" }}>
-                        {a.is_correct ? "✓" : "✗"}
+                      <div className="result-badge" style={{ background: (isWord ? isCorrect : a.is_correct) ? "#dcfce7" : "#fee2e2", color: (isWord ? isCorrect : a.is_correct) ? "#16a34a" : "#dc2626" }}>
+                        {(isWord ? isCorrect : a.is_correct) ? "✓" : "✗"}
                       </div>
                       <button className="del-btn" onClick={() => isWord ? handleDeleteWord(a.word, a.category) : handleDeleteShadowing(a.id)} title="Delete">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
