@@ -699,7 +699,8 @@ function ResultsScreen({ results, category, onHome, onRetry }) {
                 <div className="result-dot" style={{ background: r.is_correct ? "#22c55e" : "#ef4444" }} />
                 <div style={{ flex: 1 }}>
                   <div className="result-word">{i + 1}. {r.word}</div>
-                  {!r.is_correct && <div className="result-your">You wrote: <strong>"{r.user_answer}"</strong></div>}
+                  <div className="result-your">You wrote: <strong>"{r.user_answer}"</strong></div>
+                  {!r.is_correct && <div className="result-correct">Correct: <strong>"{r.word}"</strong></div>}
                 </div>
                 <div className="result-badge" style={{ background: r.is_correct ? "#dcfce7" : "#fee2e2", color: r.is_correct ? "#16a34a" : "#dc2626" }}>
                   {r.is_correct ? "✓" : "✗"}

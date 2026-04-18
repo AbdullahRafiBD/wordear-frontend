@@ -471,6 +471,11 @@ body {
   color: var(--grey-text);
   margin-top: 2px;
 }
+.result-correct {
+  font-size: clamp(11px, 2.5vw, 13px);
+  color: #2563eb;
+  margin-top: 2px;
+}
 .result-badge {
   margin-left: auto;
   width: 28px;
