@@ -778,7 +778,10 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
   // Combined stats
   const allLatest = [...latestWordAttempts, ...latestShadowingAttempts];
   const total = allLatest.length;
-  const correct = allLatest.filter((a) => a.is_correct).length;
+  const shadowingCorrect = latestShadowingAttempts.filter((a) =>
+    a.user_answer.trim().toLowerCase() === a.sentence.toLowerCase()
+  ).length;
+  const correct = latestWordAttempts.filter((a) => a.is_correct).length + shadowingCorrect;
   const wrong = total - correct;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
@@ -796,7 +799,9 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
     const levelName = a.level?.name || `Level ${a.level_id}`;
     if (!levelStats[levelName]) levelStats[levelName] = { total: 0, correct: 0 };
     levelStats[levelName].total++;
-    if (a.is_correct) levelStats[levelName].correct++;
+    if (a.user_answer.trim().toLowerCase() === a.sentence.toLowerCase()) {
+      levelStats[levelName].correct++;
+    }
   });
 
   // Combined history sorted newest first
@@ -807,6 +812,19 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
   );
 
   const [tab, setTab] = useState("overview");
+  const [historyFilter, setHistoryFilter] = useState("all");
+
+  const filteredHistory = combinedHistory.filter((attempt) => {
+    if (historyFilter === "all") return true;
+    return attempt._type === historyFilter;
+  });
+
+  const formatDate = (value) => {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  };
 
   return (
     <div className="app-screen">
@@ -897,39 +915,80 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
 
           {tab === "history" && (
             <div>
-              {combinedHistory.length === 0 && <p className="empty-msg">No attempts yet. Start playing! 🎮</p>}
-              {combinedHistory.map((a, i) => {
+              {combinedHistory.length > 0 && (
+                <div className="history-controls">
+                  {[
+                    { key: "all", label: "All" },
+                    { key: "word", label: "Words" },
+                    { key: "shadowing", label: "Shadowing" },
+                  ].map((option) => (
+                    <button
+                      key={option.key}
+                      className={`filter-pill${historyFilter === option.key ? " active" : ""}`}
+                      onClick={() => setHistoryFilter(option.key)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {filteredHistory.length === 0 && (
+                <p className="empty-msg">
+                  {combinedHistory.length === 0
+                    ? "No attempts yet. Start playing! 🎮"
+                    : "No attempts match this filter. Try another view."}
+                </p>
+              )}
+
+              {filteredHistory.map((a, i) => {
                 const isWord = a._type === "word";
-                const isCorrect = isWord ? a.user_answer.trim().toLowerCase() === a.word.toLowerCase() : a.user_answer.trim().toLowerCase() === a.sentence.toLowerCase();
+                const isCorrect = isWord
+                  ? a.is_correct ?? a.user_answer.trim().toLowerCase() === a.word.toLowerCase()
+                  : a.user_answer.trim().toLowerCase() === a.sentence.toLowerCase();
                 return (
-                  <div key={i} className="history-row">
-                    <div className="history-dot" style={{ background: (isWord ? isCorrect : a.is_correct) ? "#22c55e" : "#ef4444" }} />
+                  <div
+                    key={`${a._type}-${a.id ?? a.word}-${a.category ?? a.level_id}-${a.created_at ?? i}`}
+                    className="history-row"
+                  >
+                    <div className="history-dot" style={{ background: isCorrect ? "#22c55e" : "#ef4444" }} />
                     <div style={{ flex: 1 }}>
-                      {isWord ? (
-                        <>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div className="history-row-top">
+                        {isWord ? (
+                          <>
                             <span>🎧</span>
                             <span className="history-word">{a.word}</span>
                             <span className="history-cat">[{a.category}]</span>
-                          </div>
-                          <span className="history-wrong" style={{ color: isCorrect ? "#22c55e" : "#ef4444" }}>You wrote: "{a.user_answer}"</span>
-                        </>
-                      ) : (
-                        <>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          </>
+                        ) : (
+                          <>
                             <span>🗣️</span>
                             <span className="history-cat" style={{ color: "#7c3aed" }}>{a.level?.name || `Level ${a.level_id}`}</span>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="history-meta">
+                        {formatDate(a.created_at)} · {isWord ? `Category ${a.category}` : a.level?.name || `Level ${a.level_id}`}
+                      </div>
+
+                      <div className="history-detail">
+                        <div className="history-answer" style={{ color: isCorrect ? "#22c55e" : "#ef4444" }}>
+                          {isWord ? `Your answer: "${a.user_answer}"` : `You said: "${a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"`}
+                        </div>
+                        {!isCorrect && (
+                          <div className="history-correct">
+                            {isWord ? `Correct: "${a.word}"` : `Expected: "${a.sentence}"`}
                           </div>
-                          <span className="history-word" style={{ fontSize: 13 }}>
-                            {a.sentence.length > 60 ? a.sentence.slice(0, 60) + "…" : a.sentence}
-                          </span>
-                          <span className="history-wrong" style={{ color: isCorrect ? "#22c55e" : "#ef4444" }}>You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"</span>
-                        </>
-                      )}
+                        )}
+                      </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div className="result-badge" style={{ background: (isWord ? isCorrect : a.is_correct) ? "#dcfce7" : "#fee2e2", color: (isWord ? isCorrect : a.is_correct) ? "#16a34a" : "#dc2626" }}>
-                        {(isWord ? isCorrect : a.is_correct) ? "✓" : "✗"}
+                      <div className="history-score" style={{ color: isCorrect ? "#16a34a" : "#dc2626" }}>
+                        Score: {isCorrect ? "1" : "0"}
+                      </div>
+                      <div className="result-badge" style={{ background: isCorrect ? "#dcfce7" : "#fee2e2", color: isCorrect ? "#16a34a" : "#dc2626" }}>
+                        {isCorrect ? "✓" : "✗"}
                       </div>
                       <button className="del-btn" onClick={() => isWord ? handleDeleteWord(a.word, a.category) : handleDeleteShadowing(a.id)} title="Delete">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
