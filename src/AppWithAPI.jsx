@@ -726,10 +726,10 @@ function ProfileScreen({ user, attempts, onBack }) {
 
       {tab === "history" && (
         <div style={styles.historyList}>
-          {latestAttempts.length === 0 && (
+          {attempts.length === 0 && (
             <p style={styles.emptyMsg}>No attempts yet. Start playing! 🎮</p>
           )}
-          {[...latestAttempts].reverse().map((a, i) => (
+          {[...attempts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((a, i) => (
             <div key={i} style={styles.historyRow}>
               <div
                 style={{
