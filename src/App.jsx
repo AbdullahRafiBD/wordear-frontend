@@ -694,19 +694,24 @@ function ResultsScreen({ results, category, onHome, onRetry }) {
 
           <div className="results-section-title">Attempted Words</div>
           <div className="result-list">
-            {results.map((r, i) => (
-              <div key={i} className="result-row">
-                <div className="result-dot" style={{ background: r.is_correct ? "#22c55e" : "#ef4444" }} />
-                <div style={{ flex: 1 }}>
-                  <div className="result-word">{i + 1}. {r.word}</div>
-                  <div className="result-your">You wrote: <strong>"{r.user_answer || ""}"</strong></div>
-                  {!r.is_correct && <div className="result-correct">Correct: <strong>"{r.word}"</strong></div>}
+            {results.map((r, i) => {
+              const userAnswer = r.user_answer ?? r.answer ?? r.userAnswer ?? "";
+              const correctAnswer = r.word ?? r.content ?? "";
+              const isCorrect = r.is_correct ?? (userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase());
+              return (
+                <div key={i} className="result-row">
+                  <div className="result-dot" style={{ background: isCorrect ? "#22c55e" : "#ef4444" }} />
+                  <div style={{ flex: 1 }}>
+                    <div className="result-word">{i + 1}. {correctAnswer}</div>
+                    <div className="result-your">You wrote: <strong>"{userAnswer}"</strong></div>
+                    {!isCorrect && <div className="result-correct">Correct: <strong>"{correctAnswer}"</strong></div>}
+                  </div>
+                  <div className="result-badge" style={{ background: isCorrect ? "#dcfce7" : "#fee2e2", color: isCorrect ? "#16a34a" : "#dc2626" }}>
+                    {isCorrect ? "✓" : "✗"}
+                  </div>
                 </div>
-                <div className="result-badge" style={{ background: r.is_correct ? "#dcfce7" : "#fee2e2", color: r.is_correct ? "#16a34a" : "#dc2626" }}>
-                  {r.is_correct ? "✓" : "✗"}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
