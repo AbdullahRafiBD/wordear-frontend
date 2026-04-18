@@ -900,7 +900,7 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
               {combinedHistory.length === 0 && <p className="empty-msg">No attempts yet. Start playing! 🎮</p>}
               {combinedHistory.map((a, i) => {
                 const isWord = a._type === "word";
-                const isCorrect = isWord ? a.user_answer.trim().toLowerCase() === a.word.toLowerCase() : a.is_correct;
+                const isCorrect = isWord ? a.user_answer.trim().toLowerCase() === a.word.toLowerCase() : a.user_answer.trim().toLowerCase() === a.sentence.toLowerCase();
                 return (
                   <div key={i} className="history-row">
                     <div className="history-dot" style={{ background: (isWord ? isCorrect : a.is_correct) ? "#22c55e" : "#ef4444" }} />
@@ -923,8 +923,7 @@ function ProfileScreen({ user, attempts, shadowingAttempts, onBack, onLogout }) 
                           <span className="history-word" style={{ fontSize: 13 }}>
                             {a.sentence.length > 60 ? a.sentence.slice(0, 60) + "…" : a.sentence}
                           </span>
-                          {!a.is_correct && <span className="history-wrong">You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"</span>}
-                          {a.is_correct && <span className="history-wrong" style={{ color: "#22c55e" }}>You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"</span>}
+                          <span className="history-wrong" style={{ color: isCorrect ? "#22c55e" : "#ef4444" }}>You said: "{a.user_answer.length > 50 ? a.user_answer.slice(0, 50) + "…" : a.user_answer}"</span>
                         </>
                       )}
                     </div>
