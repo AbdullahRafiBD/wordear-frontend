@@ -21,6 +21,14 @@ const SCREENS = {
   GROUP_RESULTS: "GROUP_RESULTS",
 };
 
+// The backend serializes the `is_correct` boolean column as the string "0"/"1"
+// (or a number, depending on the DB driver). JS treats "0" as truthy, so any
+// raw comparison like `if (a.is_correct)` would mark wrong answers as correct.
+// Normalize to a real boolean once, right where the data enters the app.
+function normalizeIsCorrect(value) {
+  return value === true || value === 1 || value === "1" || value === "true";
+}
+
 // ─── TTS Utility ─────────────────────────────────────────────────────────────
 function getBestVoice() {
   const voices = window.speechSynthesis.getVoices();
@@ -207,7 +215,9 @@ export default function App() {
             attemptsAPI.getAllAttempts(),
             shadowingAPI.getAllAttempts(),
           ]);
-          setAttempts(wordRes.data);
+          setAttempts(
+            wordRes.data.map((a) => ({ ...a, is_correct: normalizeIsCorrect(a.is_correct) }))
+          );
           setShadowingAttempts(shadowRes.data);
         } catch (error) {
           console.error("Failed to load attempts:", error);
