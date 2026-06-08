@@ -21,6 +21,56 @@ const SCREENS = {
   GROUP_RESULTS: "GROUP_RESULTS",
 };
 
+// ─── Reload position memory ──────────────────────────────────────────────────
+// Remembers which screen (and selection) the user was on so a page reload
+// lands them back where they were instead of bouncing to Home.
+const LAST_SCREEN_KEY = "wordear_last_screen";
+
+// Screens whose render depends on freshly-generated result data we don't
+// persist — reload should land on the screen that produces that data instead.
+const RESULT_SCREEN_FALLBACK = {
+  [SCREENS.RESULTS]: SCREENS.CATEGORY,
+  [SCREENS.SHADOWING_RESULTS]: SCREENS.SHADOWING_LEVELS,
+  [SCREENS.GROUP_RESULTS]: SCREENS.MY_GROUPS,
+};
+
+function loadLastScreen() {
+  try {
+    const raw = sessionStorage.getItem(LAST_SCREEN_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveLastScreen(state) {
+  try {
+    sessionStorage.setItem(LAST_SCREEN_KEY, JSON.stringify(state));
+  } catch {
+    // ignore storage errors (e.g. private browsing with storage disabled)
+  }
+}
+
+function clearLastScreen() {
+  try {
+    sessionStorage.removeItem(LAST_SCREEN_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+// Resolve a saved screen back to something safe to render given which
+// selections (category/level/group) actually came back with it.
+function resolveRestoredScreen(saved) {
+  let screen = RESULT_SCREEN_FALLBACK[saved.screen] ?? saved.screen;
+  if (screen === SCREENS.QUIZ && !saved.selectedCategory) screen = SCREENS.CATEGORY;
+  if (screen === SCREENS.SHADOWING_QUIZ && !saved.selectedLevel) screen = SCREENS.SHADOWING_LEVELS;
+  if ((screen === SCREENS.GROUP_DETAIL || screen === SCREENS.GROUP_QUIZ) && !saved.selectedGroup) {
+    screen = SCREENS.MY_GROUPS;
+  }
+  return screen;
+}
+
 // The backend serializes the `is_correct` boolean column as the string "0"/"1"
 // (or a number, depending on the DB driver). JS treats "0" as truthy, so any
 // raw comparison like `if (a.is_correct)` would mark wrong answers as correct.
@@ -137,9 +187,24 @@ export default function App() {
     const savedUser = localStorage.getItem("user");
     if (token && savedUser) {
       setUser(JSON.parse(savedUser));
-      setScreen(SCREENS.HOME);
+
+      const saved = loadLastScreen();
+      if (saved && Object.values(SCREENS).includes(saved.screen) && saved.screen !== SCREENS.LOGIN) {
+        if (saved.selectedCategory) setSelectedCategory(saved.selectedCategory);
+        if (saved.selectedLevel) setSelectedLevel(saved.selectedLevel);
+        if (saved.selectedGroup) setSelectedGroup(saved.selectedGroup);
+        setScreen(resolveRestoredScreen(saved));
+      } else {
+        setScreen(SCREENS.HOME);
+      }
     }
   }, []);
+
+  // Remember the current screen + selection so a reload can restore it
+  useEffect(() => {
+    if (!user || screen === SCREENS.LOGIN) return;
+    saveLastScreen({ screen, selectedCategory, selectedLevel, selectedGroup });
+  }, [user, screen, selectedCategory, selectedLevel, selectedGroup]);
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
@@ -162,6 +227,7 @@ export default function App() {
     }
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user");
+    clearLastScreen();
     setUser(null);
     setScreen(SCREENS.LOGIN);
   };
