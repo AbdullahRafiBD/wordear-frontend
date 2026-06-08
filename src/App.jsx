@@ -26,10 +26,10 @@ const SCREENS = {
 // lands them back where they were instead of bouncing to Home.
 const LAST_SCREEN_KEY = "wordear_last_screen";
 
-// Screens whose render depends on freshly-generated result data we don't
-// persist — reload should land on the screen that produces that data instead.
+// Screens whose render depends on freshly-generated result data. RESULTS is
+// restorable directly because we persist `quizResults`; the others fall back
+// to the screen that produces their (unpersisted) result data.
 const RESULT_SCREEN_FALLBACK = {
-  [SCREENS.RESULTS]: SCREENS.CATEGORY,
   [SCREENS.SHADOWING_RESULTS]: SCREENS.SHADOWING_LEVELS,
   [SCREENS.GROUP_RESULTS]: SCREENS.MY_GROUPS,
 };
@@ -63,6 +63,9 @@ function clearLastScreen() {
 // selections (category/level/group) actually came back with it.
 function resolveRestoredScreen(saved) {
   let screen = RESULT_SCREEN_FALLBACK[saved.screen] ?? saved.screen;
+  if (screen === SCREENS.RESULTS && !(saved.quizResults && saved.selectedCategory)) {
+    screen = SCREENS.CATEGORY;
+  }
   if (screen === SCREENS.QUIZ && !saved.selectedCategory) screen = SCREENS.CATEGORY;
   if (screen === SCREENS.SHADOWING_QUIZ && !saved.selectedLevel) screen = SCREENS.SHADOWING_LEVELS;
   if ((screen === SCREENS.GROUP_DETAIL || screen === SCREENS.GROUP_QUIZ) && !saved.selectedGroup) {
@@ -193,6 +196,7 @@ export default function App() {
         if (saved.selectedCategory) setSelectedCategory(saved.selectedCategory);
         if (saved.selectedLevel) setSelectedLevel(saved.selectedLevel);
         if (saved.selectedGroup) setSelectedGroup(saved.selectedGroup);
+        if (saved.quizResults) setQuizResults(saved.quizResults);
         setScreen(resolveRestoredScreen(saved));
       } else {
         setScreen(SCREENS.HOME);
@@ -203,8 +207,8 @@ export default function App() {
   // Remember the current screen + selection so a reload can restore it
   useEffect(() => {
     if (!user || screen === SCREENS.LOGIN) return;
-    saveLastScreen({ screen, selectedCategory, selectedLevel, selectedGroup });
-  }, [user, screen, selectedCategory, selectedLevel, selectedGroup]);
+    saveLastScreen({ screen, selectedCategory, selectedLevel, selectedGroup, quizResults });
+  }, [user, screen, selectedCategory, selectedLevel, selectedGroup, quizResults]);
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
