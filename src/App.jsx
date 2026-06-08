@@ -1488,6 +1488,7 @@ function GroupResultsScreen({ results, group, onHome, onRetry, onBack }) {
                   <div className="result-word">{i+1}. {r.word}</div>
                   <div className="result-your">You wrote: <strong>"{r.user_answer || ""}"</strong></div>
                   {!r.is_correct && <div className="result-correct">Correct: <strong>"{r.word}"</strong></div>}
+                  {r.description && <div className="word-desc">📖 {r.description}</div>}
                 </div>
                 <div className="result-badge" style={{ background: r.is_correct ? "#dcfce7" : "#fee2e2", color: r.is_correct ? "#16a34a" : "#dc2626" }}>{r.is_correct ? "✓" : "✗"}</div>
               </div>
