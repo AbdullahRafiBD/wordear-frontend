@@ -26,14 +26,6 @@ const SCREENS = {
 // lands them back where they were instead of bouncing to Home.
 const LAST_SCREEN_KEY = "wordear_last_screen";
 
-// Screens whose render depends on freshly-generated result data. RESULTS is
-// restorable directly because we persist `quizResults`; the others fall back
-// to the screen that produces their (unpersisted) result data.
-const RESULT_SCREEN_FALLBACK = {
-  [SCREENS.SHADOWING_RESULTS]: SCREENS.SHADOWING_LEVELS,
-  [SCREENS.GROUP_RESULTS]: SCREENS.MY_GROUPS,
-};
-
 function loadLastScreen() {
   try {
     const raw = sessionStorage.getItem(LAST_SCREEN_KEY);
@@ -62,13 +54,19 @@ function clearLastScreen() {
 // Resolve a saved screen back to something safe to render given which
 // selections (category/level/group) actually came back with it.
 function resolveRestoredScreen(saved) {
-  let screen = RESULT_SCREEN_FALLBACK[saved.screen] ?? saved.screen;
+  let screen = saved.screen;
   if (screen === SCREENS.RESULTS && !(saved.quizResults && saved.selectedCategory)) {
     screen = SCREENS.CATEGORY;
   }
   if (screen === SCREENS.QUIZ && !saved.selectedCategory) screen = SCREENS.CATEGORY;
   if (screen === SCREENS.SHADOWING_QUIZ && !saved.selectedLevel) screen = SCREENS.SHADOWING_LEVELS;
+  if (screen === SCREENS.SHADOWING_RESULTS && !(saved.shadowingResults && saved.selectedLevel)) {
+    screen = SCREENS.SHADOWING_LEVELS;
+  }
   if ((screen === SCREENS.GROUP_DETAIL || screen === SCREENS.GROUP_QUIZ) && !saved.selectedGroup) {
+    screen = SCREENS.MY_GROUPS;
+  }
+  if (screen === SCREENS.GROUP_RESULTS && !(saved.groupQuizResults && saved.selectedGroup)) {
     screen = SCREENS.MY_GROUPS;
   }
   return screen;
@@ -197,6 +195,8 @@ export default function App() {
         if (saved.selectedLevel) setSelectedLevel(saved.selectedLevel);
         if (saved.selectedGroup) setSelectedGroup(saved.selectedGroup);
         if (saved.quizResults) setQuizResults(saved.quizResults);
+        if (saved.shadowingResults) setShadowingResults(saved.shadowingResults);
+        if (saved.groupQuizResults) setGroupQuizResults(saved.groupQuizResults);
         setScreen(resolveRestoredScreen(saved));
       } else {
         setScreen(SCREENS.HOME);
@@ -207,8 +207,25 @@ export default function App() {
   // Remember the current screen + selection so a reload can restore it
   useEffect(() => {
     if (!user || screen === SCREENS.LOGIN) return;
-    saveLastScreen({ screen, selectedCategory, selectedLevel, selectedGroup, quizResults });
-  }, [user, screen, selectedCategory, selectedLevel, selectedGroup, quizResults]);
+    saveLastScreen({
+      screen,
+      selectedCategory,
+      selectedLevel,
+      selectedGroup,
+      quizResults,
+      shadowingResults,
+      groupQuizResults,
+    });
+  }, [
+    user,
+    screen,
+    selectedCategory,
+    selectedLevel,
+    selectedGroup,
+    quizResults,
+    shadowingResults,
+    groupQuizResults,
+  ]);
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
